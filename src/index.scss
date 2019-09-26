@@ -1,0 +1,300 @@
+$mdc-theme-primary: #ff901f;
+$mdc-theme-secondary: #ff2792; // baseline teal, 600 tone
+$mdc-theme-background: #1f1f1f; // White
+$mdc-theme-surface: #1f1f1f; // White
+$mdc-theme-error: #ed22ff;
+
+@import "material-components-web/material-components-web.scss";
+
+.rmwc-circular-progress {
+  font-size: 1.5rem;
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  color: var(--mdc-theme-primary, #6200ee);
+}
+
+.rmwc-circular-progress--size-xsmall {
+  font-size: 1.125rem;
+}
+
+.rmwc-circular-progress--size-small {
+  font-size: 1.25rem;
+}
+
+.rmwc-circular-progress--size-medium {
+  font-size: 1.5rem;
+}
+
+.rmwc-circular-progress--size-large {
+  font-size: 2.25rem;
+}
+
+.rmwc-circular-progress--size-xlarge {
+  font-size: 3rem;
+}
+
+.rmwc-circular-progress--indeterminate .rmwc-circular-progress__circle {
+  animation: rmwc-circular-progress-indeterminate-bar-rotate 2s linear infinite;
+}
+
+.rmwc-circular-progress--indeterminate .rmwc-circular-progress__path {
+  animation: rmwc-circular-progress-indeterminate-bar-dash 1.5s ease-in-out infinite;
+
+  stroke-dasharray: 2.08%, 416%;
+  stroke-dashoffset: 0;
+}
+
+.rmwc-circular-progress__circle {
+  height: 100%;
+  width: 100%;
+}
+
+.rmwc-circular-progress__path {
+  -webkit-transition: stroke-dasharray 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: stroke-dasharray 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  fill: none;
+  stroke-dasharray: 0, 416%;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  stroke-miterlimit: 20;
+  stroke-width: 0.125rem;
+  stroke: currentColor;
+}
+
+.rmwc-circular-progress--thickerstroke .rmwc-circular-progress__path {
+  stroke-width: 0.25rem;
+}
+
+/** Overrides for icons */
+.rmwc-icon .rmwc-circular-progress {
+  font-size: inherit;
+}
+
+@keyframes rmwc-circular-progress-indeterminate-bar-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rmwc-circular-progress-indeterminate-bar-dash {
+  0% {
+    stroke-dasharray: 2.08%, 416%;
+    stroke-dashoffset: 0%;
+  }
+
+  50% {
+    stroke-dasharray: 185.4%, 416%;
+    stroke-dashoffset: -72.9%;
+  }
+
+  to {
+    stroke-dasharray: 185.4%, 416%;
+    stroke-dashoffset: -258.33%;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+
+  >div {
+    &:nth-child(1) {
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+
+      .todomvc {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        >div {
+
+          &:nth-child(1) {
+            flex: 0 0 auto;
+          }
+        }
+
+        .todoapp {
+          flex: 1 1 auto;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+
+          >section {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            >div {
+              &:nth-child(1) {
+                padding-top: 0;
+                overflow: auto;
+
+                >div {
+                  &:nth-child(1) {
+                    position: sticky;
+                    top: 0;
+                    z-index: 1;
+                    background-color: $mdc-theme-surface;
+                  }
+                }
+              }
+            }
+          }
+
+          >footer {
+            flex: 0 0 auto;
+            padding: 15px;
+          }
+        }
+      }
+    }
+
+    &:nth-child(2) {
+      flex: 0 0 auto;
+      background: $mdc-theme-primary;
+    }
+  }
+}
+
+body {
+  background: #1f1f1f;
+  color: #fafafa;
+}
+
+.todomvc {
+  min-width: 230px;
+  max-width: 550px;
+}
+
+.mdc-text-field__input {
+  &::placeholder {
+    color: #717171;
+    font-style: italic;
+  }
+
+  // Override the placeholder styles in IE with important rule to improve specificity.
+  // stylelint-disable-next-line selector-no-vendor-prefix
+  &:-ms-input-placeholder {
+    color: #717171;
+    font-style: italic;
+  }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $mdc-theme-primary; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $mdc-theme-secondary; 
+}
+
+/*
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #d81b60;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  >div:nth-child(1) {
+    overflow: auto;
+    flex: 1 1 auto;
+  }
+
+  >div:nth-child(2) {
+    background: #d81b60;
+    flex: 0 0 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .widget {
+      background-color: #ffff77;
+      color: rgb(27, 27, 27);
+      border-radius: 5px;
+      margin: 0 5px;
+      padding: 2px 15px 4px 15px;
+      font-size: 0.8rem;
+
+      >span:nth-child(1) {
+        font-weight: bold;
+      }
+
+      >span:nth-child(2) {
+        width: 20px;
+        display: inline-block;
+        text-align: center;
+      }
+    }
+
+    button {
+      border-radius: 50%;
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      margin: 0 15px;
+      cursor: pointer;
+      background-color: #ffff77;
+      transition: background-color 0.3s ease-in-out;
+
+      &:hover {
+        background: #fafafa;
+      }
+
+      &[disabled] {
+        background: #ccc;
+        cursor: initial;
+      }
+    }
+  }
+}
+*/
