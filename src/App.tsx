@@ -1,7 +1,7 @@
 import React from "react";
 
 import TodoApp from "./apps/todo/Todo";
-import { Slider } from "rmwc";
+import { Slider, IconButton } from "rmwc";
 
 import {
   dispatch,
@@ -39,33 +39,32 @@ const state$ = createState({
   new: newTodoOperation$
 });
 
-const [timeTravelableState$, setIndex, index$] = makeTimeTravelable(state$);
+const [timeTravelableState$, setIndex, _, play, pause] = makeTimeTravelable(state$);
 
 type Observed<T> = T extends Observable<infer S> ? S : never;
 
-type State = Observed<typeof state$>;
+type State = {
+  data: Observed<typeof state$> | undefined;
+  index: number;
+  max: number;
+};
 
 const App = () => {
   console.log("Render App");
-  const [state, setState] = React.useState<State>();
-
-  const [[index, max], setIndexState] = React.useState([
-    -1 as number,
-    0 as number
-  ] as const);
+  const [state, setState] = React.useState<State>({
+    data: undefined,
+    index: -1,
+    max: 0
+  });
 
   React.useEffect(() => {
     // const todosSubscription = todosByFilterType$.pipe(tap(setTodos)).subscribe()
 
     const eventsHandlerSubscription = eventsHandler$.subscribe();
 
-    const indexSubscription = index$
-      .pipe(tap(next => setIndexState(next)))
-      .subscribe();
-
     const stateSubscription = timeTravelableState$
       .pipe(
-        tap(setState),
+        tap(([state, _, index, max]) => setState({ data: state, index, max })),
         tap(state => Object.assign(window, { state }))
       )
       .subscribe();
@@ -74,22 +73,22 @@ const App = () => {
 
     return () => {
       eventsHandlerSubscription.unsubscribe();
-      indexSubscription.unsubscribe();
-      indexSubscription.unsubscribe();
+      stateSubscription.unsubscribe();
     };
   }, []);
 
-  if (state) {
+  const data = state.data;
+  if (data != null) {
     const onChangeFilterType = (filterType: FilterType) => {
-      state.filterType = filterType;
+      data.filterType = filterType;
     };
 
     const onChangeNew = (title: string) => {
-      state.new = makeNoop(title);
+      data.new = makeNoop(title);
     };
 
     const onSubmitNew = () => {
-      if (!isPending(state.new)) state.new = toPending(state.new);
+      if (!isPending(data.new)) data.new = toPending(data.new);
     };
 
     const onEdit = (todo: Todo, operation: TodoOperation) => (
@@ -125,9 +124,9 @@ const App = () => {
     };
 
     const isComplete = (todo: Todo) => todo.completed === true;
-    
+
     const onCompleteAll = () =>
-      state.todos
+      data.todos
         .filter(
           compose(
             a => !a,
@@ -150,7 +149,7 @@ const App = () => {
         .forEach(todo => dispatch(makeSaveEvent(...todo)));
 
     const onClearComplete = () => {
-      state.todos
+      data.todos
         .filter(
           compose(
             isComplete,
@@ -169,30 +168,64 @@ const App = () => {
         <div>
           <div className="todomvc">
             <TodoApp
-              todos={state.todos}
-              new={state.new}
-              onChangeFilterType={index >= 0 ? noop : onChangeFilterType}
-              onChangeNew={index >= 0 ? noop : onChangeNew}
-              onSubmitNew={index >= 0 ? noop : onSubmitNew}
-              filterType={state.filterType}
-              onEdit={index >= 0 ? () => noop : onEdit}
-              onSave={index >= 0 ? () => noop : onSave}
-              onCompleteAll={index >= 0 ? noop : onCompleteAll}
-              onClearComplete={index >= 0 ? noop : onClearComplete}
+              todos={data.todos}
+              new={data.new}
+              onChangeFilterType={
+                state.index !== state.max ? noop : onChangeFilterType
+              }
+              onChangeNew={state.index !== state.max ? noop : onChangeNew}
+              onSubmitNew={state.index !== state.max ? noop : onSubmitNew}
+              filterType={data.filterType}
+              onEdit={state.index !== state.max ? () => noop : onEdit}
+              onSave={state.index !== state.max ? () => noop : onSave}
+              onCompleteAll={state.index !== state.max ? noop : onCompleteAll}
+              onClearComplete={
+                state.index !== state.max ? noop : onClearComplete
+              }
             />
           </div>
         </div>
         <div>
           <div style={{ padding: 15 }}>
             <Slider
-              value={index < 0 ? max : max - index - 1}
+              value={state.index}
               // onChange={evt => setIndex(evt.detail.value)}
-              onInput={evt => setIndex(max - evt.detail.value - 1)}
+              onInput={evt => {
+                setIndex(evt.detail.value);
+              }}
               discrete
               start={0}
-              max={max}
+              max={state.max}
               step={1}
             />
+            <div className='controls'>
+              <IconButton
+                theme={state.index === 0 ? undefined : 'secondary'}
+                icon="fast_rewind"
+                onClick={() => setIndex(0)}
+                disabled={state.index === 0}
+              />
+              <IconButton
+                theme={state.index === 0 ? undefined : 'secondary'}
+                icon="skip_previous"
+                onClick={() => setIndex(state.index - 1)}
+                disabled={state.index === 0}
+              />
+              <IconButton theme="secondary" icon="stop" onClick={pause} />
+              <IconButton theme="secondary" icon="play_circle_filled" onClick={play} />
+              <IconButton
+                theme={state.index === state.max ? undefined : 'secondary'}
+                icon="skip_next"
+                onClick={() => setIndex(state.index + 1)}
+                disabled={state.index === state.max}
+              />
+              <IconButton
+                theme={state.index === state.max ? undefined : 'secondary'}
+                icon="fast_forward"
+                onClick={() => setIndex(state.max)}
+                disabled={state.index === state.max}
+              />
+            </div>
           </div>
         </div>
       </>

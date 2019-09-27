@@ -6,7 +6,6 @@ import {
   mergeMap,
   share,
   withLatestFrom,
-  mapTo,
   switchMap,
   groupBy,
   timeoutWith,
@@ -64,6 +63,7 @@ export const events$ = new Subject<TodoEvent>();
  * Helper function for dispatching to the event stream.
  */
 export const dispatch = (event: TodoEvent) => {
+  console.warn(`Dispatching ${event.type}`);
   events$.next(event);
 };
 
@@ -71,7 +71,37 @@ type TodoWithOperation = [Todo, TodoOperation];
 /**
  * Fetches and streams ToDos
  */
-export const [todos$, storeTodos] = stateOf<TodoWithOperation[]>([]);
+export const [todos$, storeTodos] = stateOf<TodoWithOperation[]>([], $ =>
+  $.pipe(tap(() => console.log("Streaming Todos")))
+);
+
+
+let subs = 0;
+
+const subscribe = todos$.subscribe
+Object.assign(todos$, {
+  subscribe: (...args: any[]) => {
+    const nbr = ++subs;
+
+    console.warn(`Subscribe ${nbr}`)
+    const subscription = subscribe.call(todos$, ...args)
+
+    if (subscription.unsubscribe) {
+      const unsubscribe = subscription.unsubscribe
+
+      Object.assign(subscription, {
+        unsubscribe: (...args: any[]) => {
+          console.info(args)
+          console.error(`Unsubscrube ${nbr}`)
+          subs--;
+          unsubscribe.call(subscription)
+        }
+      })
+    }
+
+    return subscription
+  }
+})
 
 /**
  *
@@ -98,7 +128,7 @@ const readTodos$ = () =>
     tap(storeTodos)
   );
 
-/**
+/** 
  *
  * @param event
  */
@@ -128,6 +158,7 @@ const storeTodo = <S, O extends TodoOperation, T extends TodoId | Todo>(
   mergeMap((stream: S) =>
     of(stream).pipe(
       // Combine the stream with the most recent state of the list of todos
+      tap(() => console.error('withLatestFrom')),
       withLatestFrom(todos$),
       map(([stream, todos]) => {
         const [todoOrId, todoOperation] = get(stream);
@@ -169,12 +200,15 @@ const makeSaveEvent$ = (event: SaveEvent) =>
   concat(
     // Update state for this todo to status "Pending"
     of(toPending(event.operation, EventType.Save)).pipe(
+      tap(() => console.warn(`Storing pending todo`)),
+
       storeTodo(stream => tuple(event.todo, stream)),
       map(data => threcond(data)),
       map(data => curry(tuple)(event)(data))
     ),
     // Continue with updating the the todo on the server
     from(update(event.todo, event.operation)).pipe(
+      tap(console.clear),
       storeTodo(stream => {
         // const foo = isOk(stream)
         //   ? tuple(stream.state, stream)
@@ -197,6 +231,7 @@ const makeSaveEvent$ = (event: SaveEvent) =>
  *
  */
 export const handleEvents$ = events$.pipe(
+  tap(event => console.warn(`Handle event ${event.type}`)),
   groupBy(
     event => {
       if (isFetchEvent(event)) {
@@ -257,23 +292,25 @@ export const handleEvents$ = events$.pipe(
                         pendingOperation as Pending<Mutable, EventType.Delete>
                       )
                     ).pipe(
-                      mergeMap(
-                        stream => {
-                          if (isOk((stream))) {
-                            return of(void 0).pipe(
-                              withLatestFrom(todos$),
-                              map(second),
-                              tap(todos => storeTodos(todos.filter(([todo]) => todo.id !== stream.state.id)))
-                            )
-                          }
-
+                      mergeMap(stream => {
+                        if (isOk(stream)) {
                           return of(void 0).pipe(
-                            storeTodo(
-                              () => [first(maybeTodo), stream] 
+                            withLatestFrom(todos$),
+                            map(second),
+                            tap(todos =>
+                              storeTodos(
+                                todos.filter(
+                                  ([todo]) => todo.id !== stream.state.id
+                                )
+                              )
                             )
-                          )
+                          );
                         }
-                      )
+
+                        return of(void 0).pipe(
+                          storeTodo(() => [first(maybeTodo), stream])
+                        );
+                      })
                     )
                   )
                 )
@@ -316,7 +353,7 @@ export const newTodoOperation$ = stateOf<NewTodoOperation>(
               startWith(state)
             )
           : of(state)
-      ),
-      share()
+      )
+      // share()
     )
 );

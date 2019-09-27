@@ -7,7 +7,7 @@ import {
 
 import { stateOf } from "../../modules/rxjs-state";
 
-import { todos$} from "../../modules/todo/observables";
+import { todos$ } from "../../modules/todo/observables";
 
 import { FilterType } from "./types";
 import { map, filter } from "rxjs/operators";

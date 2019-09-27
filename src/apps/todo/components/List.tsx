@@ -39,7 +39,6 @@ export type PropsList = {
 };
 
 export const List = (props: PropsList) => {
-  console.log('new', props.new.status)
   const newTodo = props.new;
 
   const onChangeNew = isOk(newTodo)
@@ -88,7 +87,7 @@ export const List = (props: PropsList) => {
             theme="textPrimaryOnDark"
             placeholder="Where do you want to go today?"
             style={{ height: "100%" }}
-            onInput={onChangeNew}
+            onChange={onChangeNew}
             value={props.new.state || ''}
             onKeyUp={evt => evt.keyCode === 13 && props.onSubmitNew()}
             autoFocus

@@ -1,6 +1,6 @@
 import { Observable, combineLatest } from "rxjs";
 import { isStateObservable, StateObservable, ObservableLike } from "./stateOf";
-import { map } from "rxjs/operators";
+import { map, tap, share } from "rxjs/operators";
 
 /**
  * Returns a type describing all keys of object T
@@ -128,7 +128,9 @@ export const createState = <T extends MapOfObservables>(
                 }
               }
             ];
-          })
+          }),
+          tap(state => console.warn(`Streaming [${key}]`)),
+
         );
 
         acc.push(nextState$);
@@ -160,7 +162,9 @@ export const createState = <T extends MapOfObservables>(
         },
         {} as any
       )
-    )
+    ),
+    tap(state => console.log('State, state', state)),
+    share()
   );
 
   return state$;

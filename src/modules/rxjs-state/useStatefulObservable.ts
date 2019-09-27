@@ -7,7 +7,7 @@ import { once, compose, first, second } from '../utils';
 export const useStatefulObservable = <T>([
   state$,
   next,
-  initialState
+  getState
 ]: StateObservable<T>) => {
   const [state, setState] = React.useState<T>();
 
@@ -31,5 +31,5 @@ export const useStatefulObservable = <T>([
     return () => subscription.unsubscribe();
   });
 
-  return [state || initialState, (nextState: T) => next(nextState)] as const;
+  return [state || getState(), (nextState: T) => next(nextState)] as const;
 };
