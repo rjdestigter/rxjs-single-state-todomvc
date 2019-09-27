@@ -56,11 +56,11 @@ export const makeTimeTravelable = <T>(observable$: Observable<T>) => {
 
   const stateWithHistory$ = combineLatest(indexSubject, observable$).pipe(
     scan(
-      ([state, _, history], [nextIndex, nextState]) => {
+      ([state, index, history], [nextIndex, nextState]) => {
         return state !== nextState
           ? ([
               nextState,
-              nextIndex,
+              index >= 0 && index + 1 < history.length ? index + 1 : -1,
               state ? [...history, [state, Date.now()]] : []
             ] as [T, number, [T, number][]])
           : ([nextState, nextIndex, history] as [T, number, [T, number][]]);
