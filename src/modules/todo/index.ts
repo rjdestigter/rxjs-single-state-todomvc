@@ -1,4 +1,5 @@
 export * from './types'
+export * from './assert'
 export * from './utils'
 export * from './events'
 export * from './observables'

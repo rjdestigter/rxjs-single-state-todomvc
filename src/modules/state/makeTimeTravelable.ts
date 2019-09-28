@@ -24,7 +24,7 @@ import {
   filter,
   share
 } from "rxjs/operators";
-import { first, second, tuple } from "../utils";
+import { first, second, tuple, isNotNull } from "../utils";
 
 /**
  * Turns an observable into a time travelable
@@ -52,7 +52,6 @@ import { first, second, tuple } from "../utils";
  */
 export const makeTimeTravelable = <T>(observable$: Observable<T>) => {
   const indexSubject = new BehaviorSubject(-1);
-  const startDate = Date.now();
 
   const stateWithHistory$ = combineLatest(indexSubject, observable$).pipe(
     scan(
@@ -107,10 +106,12 @@ export const makeTimeTravelable = <T>(observable$: Observable<T>) => {
     indexSubject.next(index);
   };
 
+  const stream$ = merge(replay$, stateWithHistory$).pipe(
+    filter(<T>(stream: T | undefined): stream is T => !!stream)
+  )
+
   return [
-    merge(replay$, stateWithHistory$).pipe(
-      filter(result => !!result)
-    ) as typeof stateWithHistory$,
+    stream$,
     setIndex,
     indexSubject.asObservable(),
     () => playSubject.next('PLAY'),

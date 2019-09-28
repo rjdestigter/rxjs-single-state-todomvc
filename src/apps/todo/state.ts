@@ -16,10 +16,6 @@ export const [timeTravelableState$, setIndex, _, play, pause] = makeTimeTravelab
   state$
 );
 
-type Observed<T> = T extends Observable<infer S> ? S : never;
+export type Observed<T> = T extends Observable<infer S> ? S : never;
 
-export type State = {
-  data: Observed<typeof state$> | undefined;
-  index: number;
-  max: number;
-};
+export type State = Observed<typeof state$>;
