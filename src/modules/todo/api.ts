@@ -47,11 +47,13 @@ const getNextFailFlag = () => {
 const delay = (ms: number) =>
   new Promise<void>(resolve => setTimeout(resolve, ms));
 
-/**
+const randomDelay = () => delay(Math.ceil(Math.random() * 2500))
+
+/** 
  * API for loading the list of Todos in the database.
  */
 export const read = async () => {
-  const doFail = getNextFailFlag();
+  getNextFailFlag();
 
   // Only make the network call once since we are mocking things here.
   if (todos.length <= 0) {
@@ -78,7 +80,17 @@ export const create = async (
 ): Promise<Ok<Todo> | Bad<string>> => {
   const doFail = getNextFailFlag();
 
-  await delay(1500);
+  const title = operation.state.trim()
+  
+  if (!title) {
+    return {
+      status: Status.Bad,
+      error: "A title is required!",
+      state: operation.state
+    };
+  }
+  
+  await randomDelay();
 
   if (doFail) {
     return {
@@ -88,10 +100,12 @@ export const create = async (
     };
   }
 
-  if (!operation.state) {
+  const exists = todos.find(todo => todo.title === title)
+
+  if (exists) {
     return {
       status: Status.Bad,
-      error: "A title is required!",
+      error: "A task with this title alreay exists!",
       state: operation.state
     };
   }
@@ -121,7 +135,7 @@ export const update = async (
   todo: Todo,
   operation: Exclude<TodoOperation, { status: Status.Ok | Status.Pending }>
 ): Promise<Ok<Todo, EventType.Save> | Bad<MutableTodo, EventType.Save>> => {
-  await delay(1500);
+  await randomDelay();
   const doFail = getNextFailFlag();
 
   if (doFail) {
@@ -178,7 +192,7 @@ export const deleet = async (
   todo: Todo,
   operation: Pending<MutableTodo, EventType.Delete> //Exclude<TodoOperation, { status: Status.Ok | Status.Pending }>
 ): Promise<Ok<Todo, EventType.Delete> | Bad<MutableTodo, EventType.Delete>> => {
-  await delay(1500);
+  await randomDelay();
   const doFail = getNextFailFlag();
 
   if (doFail) {

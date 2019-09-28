@@ -11,6 +11,8 @@ import {
   ListItemText
 } from '@rmwc/list'
 
+import { Snackbar, SnackbarAction } from '@rmwc/snackbar'
+
 import {CircularProgress} from '@rmwc/circular-progress'
 import {TextField} from '@rmwc/textfield'
 
@@ -68,6 +70,16 @@ export default (props: PropsList) => {
         props.onChangeNew(evt.currentTarget.value);
       };
 
+  const snack = isBad(props.new) ? (
+    <Snackbar
+        icon={{icon: 'error', theme: 'secondary'}}
+        open
+        theme='primaryBg'
+        style={{background: 'var(--mdc-theme-primary)'}}
+        message={props.new.error}
+      />
+  ) : null
+
   return (
     <List className="todo-list" twoLine>
       <ListItem>
@@ -120,6 +132,7 @@ export default (props: PropsList) => {
       </ListItem>
       <ListDivider />
       {renderList(props)}
+      {snack}
     </List>
   );
 };
