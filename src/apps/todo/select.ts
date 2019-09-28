@@ -9,7 +9,9 @@ import {
   isBad,
   Noop
 } from "../../modules/operations";
+
 import { FilterType } from "../../modules/filter-todo";
+
 import {
   dispatch,
   makeEditEvent,
@@ -20,8 +22,9 @@ import {
   makeDeleteEvent,
   isComplete
 } from "../../modules/todo";
-import { compose, second, tuple, first, isNotNull } from "../../modules/utils";
-import { Observable } from "rxjs";
+
+import { compose, second, tuple, first } from "../../modules/utils";
+import { noop } from "rxjs";
 
 const makeOnChangeFilterType = (state: State) => (filterType: FilterType) => {
   state.filterType = filterType;
@@ -105,21 +108,21 @@ const makeOnClearComplete = (state: State) => () => {
     .forEach(([todo]) => dispatch(makeDeleteEvent(todo)));
 };
 
-const state$ = timeTravelableState$.pipe(map(([a]) => a));
-
 /**
  * Observable returning props
  */
-export const props$ = state$.pipe(
-  filter(<T>(stream: T | undefined): stream is T => !!stream),
-  map((state) => {
-    const onChangeFilterType = makeOnChangeFilterType(state);
-    const onChangeNew = makeOnChangeNew(state);
-    const onSubmitNew = makeOnSubmitNew(state);
-    const onEdit = makeOnEdit(state);
-    const onSave = makeOnSave;
-    const onCompleteAll = makeOnCompleteAll(state);
-    const onClearComplete = makeOnClearComplete(state);
+export const props$ = timeTravelableState$.pipe(
+  // filter(<T>(stream: T | undefined): stream is T => !!stream),
+  map(([state, _, index, max]) => {
+    const isReplaying = index !== max
+
+    const onChangeFilterType = isReplaying ? noop : makeOnChangeFilterType(state);
+    const onChangeNew = isReplaying ? noop : makeOnChangeNew(state);
+    const onSubmitNew = isReplaying ? noop : makeOnSubmitNew(state);
+    const onEdit = isReplaying ? () => noop : makeOnEdit(state);
+    const onSave = isReplaying ? () => noop : makeOnSave;
+    const onCompleteAll = isReplaying ? noop : makeOnCompleteAll(state);
+    const onClearComplete = isReplaying ? noop : makeOnClearComplete(state);
 
     return {
       todos: state.todos,

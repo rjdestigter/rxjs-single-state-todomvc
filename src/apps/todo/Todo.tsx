@@ -1,19 +1,19 @@
 import * as React from "react";
+import { Typography } from "@rmwc/typography";
+import { Button } from "@rmwc/button";
+
 import {
   Todo,
   TodoOperation,
   NewTodoOperation,
   MutableTodo
 } from "../../modules/todo/types";
-import { List } from "./components/List";
-import {
-  FilterType,
-  isFilterTypeAll,
-  isFilterTypeActive,
-  isFilterTypeCompleted
-} from "../../modules/filter-todo";
 
-import * as R from "rmwc";
+import { FilterType } from "../../modules/filter-todo";
+
+import List from "./components/List";
+import Title from "./components/Title";
+import Filter from "./components/Filter";
 
 export interface PropsTodo {
   todos: [Todo, TodoOperation][];
@@ -35,7 +35,6 @@ export interface PropsTodo {
 }
 
 export default (props: PropsTodo) => {
-  // console.log(JSON.stringify(props, null, 2))
   const list = (
     <List
       todos={props.todos}
@@ -48,53 +47,35 @@ export default (props: PropsTodo) => {
     />
   );
 
+  const clearBtn = (
+    <div>
+      <Button onClick={props.onClearComplete}>Clear completed</Button>
+    </div>
+  );
+
+  const filterChips = (
+    <Filter
+      filterType={props.filterType}
+      onChangeFilterType={props.onChangeFilterType}
+    />
+  );
+
+  const footer = (
+    <Typography use="caption" style={{ color: "#999  " }}>
+      <strong>{props.todos.filter(([todo]) => !todo.completed).length}</strong>{" "}
+      item left
+    </Typography>
+  );
+
   return (
     <>
-      <div style={{ textAlign: "center", marginTop: 15 }}>
-        <R.Typography use="headline1" theme="secondary">
-          todos
-        </R.Typography>
-      </div>
+      <Title />
       <section className="todoapp">
         <section className="main">{list}</section>
         <footer className="footer" style={{ textAlign: "center" }}>
-          <R.ChipSet choice style={{ justifyContent: "center" }}>
-            <R.Chip
-              label="All"
-              theme={
-                isFilterTypeAll(props.filterType) ? "secondaryBg" : undefined
-              }
-              onClick={() => props.onChangeFilterType(FilterType.All)}
-            />
-            <R.Chip
-              label="Active"
-              icon="radio_button_unchecked"
-              theme={
-                isFilterTypeActive(props.filterType) ? "secondaryBg" : undefined
-              }
-              onClick={() => props.onChangeFilterType(FilterType.Active)}
-            />
-            <R.Chip
-              label="Completed"
-              icon="check_circle_outline"
-              theme={
-                isFilterTypeCompleted(props.filterType)
-                  ? "secondaryBg"
-                  : undefined
-              }
-              onClick={() => props.onChangeFilterType(FilterType.Completed)}
-            />
-          </R.ChipSet>
-
-          <div>
-            <R.Button onClick={props.onClearComplete}>Clear completed</R.Button>
-          </div>
-          <R.Typography use="caption" style={{ color: "#999  " }}>
-            <strong>
-              {props.todos.filter(([todo]) => !todo.completed).length}
-            </strong>{" "}
-            item left
-          </R.Typography>
+          {filterChips}
+          {clearBtn}
+          {footer}
         </footer>
       </section>
     </>

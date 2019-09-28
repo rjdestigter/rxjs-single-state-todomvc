@@ -1,4 +1,19 @@
 import * as React from "react";
+
+import {
+  List,
+  ListItem,
+  ListItemGraphic,
+  ListItemPrimaryText,
+  ListItemSecondaryText,
+  ListItemMeta,
+  ListDivider,
+  ListItemText
+} from '@rmwc/list'
+
+import {CircularProgress} from '@rmwc/circular-progress'
+import {TextField} from '@rmwc/textfield'
+
 import {
   Todo,
   TodoOperation,
@@ -6,7 +21,6 @@ import {
   MutableTodo,
   EventType
 } from "../../../modules/todo/types";
-import * as R from "rmwc";
 
 import { Item } from "./Item";
 import { isOk, isPending, isBad } from "../../../modules/operations";
@@ -45,7 +59,7 @@ export type PropsList = {
   onCompleteAll: () => void;
 };
 
-export const List = (props: PropsList) => {
+export default (props: PropsList) => {
   const newTodo = props.new;
 
   const onChangeNew = isOk(newTodo)
@@ -55,29 +69,29 @@ export const List = (props: PropsList) => {
       };
 
   return (
-    <R.List className="todo-list" twoLine>
-      <R.ListItem>
-        <R.ListItemGraphic
+    <List className="todo-list" twoLine>
+      <ListItem>
+        <ListItemGraphic
           title={"Mark all as complete."}
           icon={{ icon: "keyboard_arrow_down", onClick: props.onCompleteAll }}
           theme="secondary"
         />
         {isPending(props.new) ? (
           <>
-            <R.ListItemText>
-              <R.ListItemPrimaryText theme="secondary">
+            <ListItemText>
+              <ListItemPrimaryText theme="secondary">
                 {props.new.state}
-              </R.ListItemPrimaryText>
-              <R.ListItemSecondaryText style={{ fontStyle: "italic " }}>
+              </ListItemPrimaryText>
+              <ListItemSecondaryText style={{ fontStyle: "italic " }}>
                 ...busy
-              </R.ListItemSecondaryText>
-            </R.ListItemText>
-            <R.ListItemMeta
+              </ListItemSecondaryText>
+            </ListItemText>
+            <ListItemMeta
               icon={
                 props.new.status == null ? (
                   ""
                 ) : isPending(props.new) ? (
-                  <R.CircularProgress theme="secondary" />
+                  <CircularProgress theme="secondary" />
                 ) : isBad(props.new) ? (
                   { icon: "error", theme: "error" }
                 ) : isOk(props.new) ? (
@@ -89,7 +103,7 @@ export const List = (props: PropsList) => {
             />
           </>
         ) : (
-          <R.TextField
+          <TextField
             fullwidth
             theme="textPrimaryOnDark"
             placeholder="Where do you want to go today?"
@@ -103,9 +117,9 @@ export const List = (props: PropsList) => {
             }
           />
         )}
-      </R.ListItem>
-      <R.ListDivider />
+      </ListItem>
+      <ListDivider />
       {renderList(props)}
-    </R.List>
+    </List>
   );
 };

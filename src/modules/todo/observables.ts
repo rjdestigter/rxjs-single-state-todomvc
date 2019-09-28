@@ -42,7 +42,7 @@ import {
   TodoWithOperation
 } from "./types";
 
-import { isFetchEvent, isEditEvent, isSaveEvent } from "./events";
+import { isFetchEvent, isEditEvent, isSaveEvent, makeFetchEvent } from "./events";
 
 import { toMutable } from "./utils";
 
@@ -82,6 +82,11 @@ export const dispatch = (event: TodoEvent) => {
   console.warn(`Dispatching ${event.type}`);
   events$.next(event);
 };
+
+/**
+ * dispatchFetch :: () -> void
+ */
+export const dispatchFetch = () => dispatch(makeFetchEvent());
 
 /**
  * Create a transactional [[StateObservable]] allowing us to use the

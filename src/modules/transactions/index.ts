@@ -1,6 +1,6 @@
-import { isArray, IS_TUPLE } from "../utils";
+import { isArray } from "../utils";
 
-import { Update, TransactionLike, TransactionType } from "./types";
+import { TransactionLike, TransactionType } from "./types";
 
 export * from "./types";
 export * from "./utils";

@@ -1,139 +1,56 @@
 import React from "react";
 import { noop } from "rxjs";
-import { tap } from "rxjs/operators";
-import { Slider, IconButton } from "rmwc";
 
 import TodoApp from "./apps/todo/Todo";
+import Controls from "./apps/state-replay/compontents/Controls";
+import Loading from "./Loading";
 
-// Todo
-import {
-  dispatch,
-  eventsHandler$,
-  makeFetchEvent,
-} from "./modules/todo";
-
-// Apps
-import {
-  State,
-  timeTravelableState$,
-  setIndex,
-  _,
-  play,
-  pause,
-  Observed
-} from "./apps/todo/state";
-
-import { props$ } from "./apps/todo/select";
+import { setIndex, play, pause } from "./apps/todo/state";
+import { useTodoProps } from "./apps/todo/hooks";
 
 const App = () => {
-  const [state, setState] = React.useState<{index: number, max: number}>({
-    index: -1,
-    max: 0
-  });
-
-  const [props, setProps] = React.useState<
-    Observed<typeof props$> | undefined
-  >();
-
-  React.useEffect(() => {
-    // const todosSubscription = todosByFilterType$.pipe(tap(setTodos)).subscribe()
-
-    const propsSubscription = props$.pipe(tap(setProps)).subscribe();
-
-    const eventsHandlerSubscription = eventsHandler$.subscribe();
-
-    const stateSubscription = timeTravelableState$
-      .pipe(
-        tap(([, , index, max]) => setState({ index, max }))
-      )
-      .subscribe();
-
-    dispatch(makeFetchEvent());
-
-    return () => {
-      eventsHandlerSubscription.unsubscribe();
-      stateSubscription.unsubscribe();
-      propsSubscription.unsubscribe();
-    };
-  }, []);
-
+  const [props, state] = useTodoProps();
   if (props != null) {
+    const todoApp = (
+      <TodoApp
+        todos={props.todos}
+        new={props.new}
+        onChangeFilterType={
+          props.onChangeFilterType
+        }
+        onChangeNew={props.onChangeNew}
+        onSubmitNew={props.onSubmitNew}
+        filterType={props.filterType}
+        onEdit={props.onEdit}
+        onSave={props.onSave}
+        onCompleteAll={props.onCompleteAll}
+        onClearComplete={
+          props.onClearComplete
+        }
+      />
+    );
+
+    const controls = (
+      <Controls
+        index={state.index}
+        max={state.max}
+        setIndex={setIndex}
+        pause={pause}
+        play={play}
+      />
+    );
+
     return (
       <>
         <div>
-          <div className="todomvc">
-            <TodoApp
-              todos={props.todos}
-              new={props.new}
-              onChangeFilterType={
-                state.index !== state.max ? noop : props.onChangeFilterType
-              }
-              onChangeNew={state.index !== state.max ? noop : props.onChangeNew}
-              onSubmitNew={state.index !== state.max ? noop : props.onSubmitNew}
-              filterType={props.filterType}
-              onEdit={state.index !== state.max ? () => noop : props.onEdit}
-              onSave={state.index !== state.max ? () => noop : props.onSave}
-              onCompleteAll={
-                state.index !== state.max ? noop : props.onCompleteAll
-              }
-              onClearComplete={
-                state.index !== state.max ? noop : props.onClearComplete
-              }
-            />
-          </div>
+          <div className="todomvc">{todoApp}</div>
         </div>
-        <div>
-          <div style={{ padding: 15 }}>
-            <Slider
-              value={state.index}
-              // onChange={evt => setIndex(evt.detail.value)}
-              onInput={evt => {
-                setIndex(evt.detail.value);
-              }}
-              discrete
-              start={0}
-              max={state.max}
-              step={1}
-            />
-            <div className="controls">
-              <IconButton
-                theme={state.index === 0 ? undefined : "secondary"}
-                icon="fast_rewind"
-                onClick={() => setIndex(0)}
-                disabled={state.index === 0}
-              />
-              <IconButton
-                theme={state.index === 0 ? undefined : "secondary"}
-                icon="skip_previous"
-                onClick={() => setIndex(state.index - 1)}
-                disabled={state.index === 0}
-              />
-              <IconButton theme="secondary" icon="stop" onClick={pause} />
-              <IconButton
-                theme="secondary"
-                icon="play_circle_filled"
-                onClick={play}
-              />
-              <IconButton
-                theme={state.index === state.max ? undefined : "secondary"}
-                icon="skip_next"
-                onClick={() => setIndex(state.index + 1)}
-                disabled={state.index === state.max}
-              />
-              <IconButton
-                theme={state.index === state.max ? undefined : "secondary"}
-                icon="fast_forward"
-                onClick={() => setIndex(state.max)}
-                disabled={state.index === state.max}
-              />
-            </div>
-          </div>
-        </div>
+        <div>{controls}</div>
       </>
     );
   }
 
-  return <div>Loading..</div>;
+  return <Loading />;
 };
 
 export default App;

@@ -1,5 +1,4 @@
-import { Observable, concat, BehaviorSubject } from "rxjs";
-import { identity } from "../utils";
+import { Observable, BehaviorSubject } from "rxjs";
 
 /**
  * Similar to the what React's `useState` hook returns but for observables.

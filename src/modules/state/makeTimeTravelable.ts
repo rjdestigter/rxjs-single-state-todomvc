@@ -4,27 +4,23 @@ import {
   combineLatest,
   BehaviorSubject,
   of,
-  interval,
   EMPTY,
   merge,
   concat
 } from "rxjs";
+
 import {
-  debounceTime,
   scan,
-  startWith,
   map,
   withLatestFrom,
-  mergeAll,
   tap,
   delay,
-  mergeMap,
-  repeat,
   switchMap,
   filter,
   share
 } from "rxjs/operators";
-import { first, second, tuple, isNotNull } from "../utils";
+
+import { tuple, isNotNull } from "../utils";
 
 /**
  * Turns an observable into a time travelable
@@ -66,6 +62,9 @@ export const makeTimeTravelable = <T>(observable$: Observable<T>) => {
       },
       [undefined, -1, []] as [T | undefined, number, [T, number][]]
     ),
+    filter((stream): stream is [T, number, [T, number][]] =>
+      isNotNull(stream[0])
+    ),
     map(([state, index, history]) => {
       if (index < 0 || index >= history.length) {
         return [state, history, history.length, history.length] as const;
@@ -84,10 +83,13 @@ export const makeTimeTravelable = <T>(observable$: Observable<T>) => {
       if (mode === "PLAY") {
         return concat(of(s), stateWithHistory$).pipe(
           switchMap(([state, history, index]) => {
-            const timeline = state ? [...history, tuple(state, history[history.length - 1][1] + 250)] : history
-            const ms = index > 0 && timeline[index + 1]
-              ? timeline[index + 1][1] - timeline[index][1]
-              : 0;
+            const timeline = state
+              ? [...history, tuple(state, history[history.length - 1][1] + 250)]
+              : history;
+            const ms =
+              index > 0 && timeline[index + 1]
+                ? timeline[index + 1][1] - timeline[index][1]
+                : 0;
 
             return of(void 0).pipe(
               delay(ms > 2500 ? 250 : ms),
@@ -102,19 +104,20 @@ export const makeTimeTravelable = <T>(observable$: Observable<T>) => {
   );
 
   const setIndex = (index: number) => {
-    console.log(index);
     indexSubject.next(index);
   };
 
   const stream$ = merge(replay$, stateWithHistory$).pipe(
-    filter(<T>(stream: T | undefined): stream is T => !!stream)
-  )
+    filter((stream): stream is readonly [T, [T, number][], number, number] =>
+      isNotNull(stream)
+    )
+  );
 
   return [
     stream$,
     setIndex,
     indexSubject.asObservable(),
-    () => playSubject.next('PLAY'),
-    () => playSubject.next('PAUSE')
+    () => playSubject.next("PLAY"),
+    () => playSubject.next("PAUSE")
   ] as const;
 };
