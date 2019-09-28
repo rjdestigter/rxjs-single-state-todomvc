@@ -9,7 +9,7 @@ import {
 import * as R from "rmwc";
 
 import { Item } from "./Item";
-import { isOk, isPending, isBad, Status } from "../../../modules/operations";
+import { isOk, isPending, isBad } from "../../../modules/operations";
 import { noop } from "rxjs";
 
 export const renderList = (props: PropsList) =>

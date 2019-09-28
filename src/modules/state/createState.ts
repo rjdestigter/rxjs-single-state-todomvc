@@ -1,5 +1,5 @@
 import { Observable, combineLatest } from "rxjs";
-import { isStateObservable, StateObservable, ObservableLike } from "./stateOf";
+import { isStateObservable, ObservableLike } from "./stateOf";
 import { map, tap, share } from "rxjs/operators";
 
 /**
@@ -129,7 +129,7 @@ export const createState = <T extends MapOfObservables>(
               }
             ];
           }),
-          tap(state => console.warn(`Streaming [${key}]`)),
+          tap(_ => console.warn(`Streaming [${key}]`)),
 
         );
 

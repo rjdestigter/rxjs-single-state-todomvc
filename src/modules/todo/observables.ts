@@ -14,11 +14,17 @@ import {
 } from "rxjs/operators";
 
 // Utilities
-import { arrayBimap } from "../utils/array";
-import { tuple, compose, thruple, identity } from "../utils";
+import {
+  tuple,
+  compose,
+  thruple,
+  identity,
+  IS_TUPLE,
+  arrayBimap
+} from "../utils";
 
 // State
-import { stateOf, StateObservable, IS_TUPLE, transactionalStateOf } from "../state";
+import { stateOf, StateObservable, transactionalStateOf } from "../state";
 
 // API
 import { read, create, update, deleet } from "./api";
@@ -60,16 +66,16 @@ import {
 
 /**
  * @private
- * 
+ *
  * [[Subject]] for dispatching and streaming events.
  */
 const events$ = new Subject<TodoEvent>();
 
 /**
  * dispatch :: TodoEvent -> ()
- * 
+ *
  * Function for dispatching to the [[events$]] [[Subject]]
- * 
+ *
  * @param event An [[EditEvent]], [[SaveEent]], or [[DeleteEvent]].
  */
 export const dispatch = (event: TodoEvent) => {

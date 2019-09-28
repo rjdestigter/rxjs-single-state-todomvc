@@ -29,7 +29,7 @@ export const useStatefulObservable = <T>([
     const subscription = final$.subscribe();
 
     return () => subscription.unsubscribe();
-  });
+  }, []);
 
   return [state || getState(), (nextState: T) => next(nextState)] as const;
 };

@@ -9,9 +9,9 @@ import {
   eventsHandler$
 } from "./modules/todo/observables";
 
-import { tap, filter } from "rxjs/operators";
+import { tap } from "rxjs/operators";
 
-import { filterTypeState$, todosByFilterType$ } from "./apps/todo/observables";
+import { todosByFilterType$ } from "./apps/todo/observables";
 import { createState, makeTimeTravelable } from "./modules/state";
 
 import { Observable, noop } from "rxjs";
@@ -30,7 +30,7 @@ import {
   Noop
 } from "./modules/operations";
 import { TodoOperation, Todo, MutableTodo } from "./modules/todo/types";
-import { FilterType } from "./apps/todo/types";
+import { FilterType, filterTypeState$ } from "./modules/filter-todo";
 import { compose, first, second, tuple } from "./modules/utils";
 
 const state$ = createState({

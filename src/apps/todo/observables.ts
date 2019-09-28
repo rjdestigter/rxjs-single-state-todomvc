@@ -1,15 +1,12 @@
-import { selectTodoFilter } from "../../modules/utils";
-
-import { stateOf } from "../../modules/state";
+import { combineLatest } from "rxjs";
+import { map } from "rxjs/operators";
 
 import { todos$ } from "../../modules/todo/observables";
+import { selectTodoFilter, filterTypeState$ } from "../../modules/filter-todo";
 
-import { FilterType } from "./types";
-import { map } from "rxjs/operators";
-import { combineLatest } from "rxjs";
-
-export const filterTypeState$ = stateOf(FilterType.All);
-
+/**
+ * Observable returning todos filtered by selected filter type.
+ */
 export const todosByFilterType$ = combineLatest(
   todos$,
   filterTypeState$[0]

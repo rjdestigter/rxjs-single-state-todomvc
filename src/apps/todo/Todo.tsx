@@ -6,12 +6,12 @@ import {
   MutableTodo
 } from "../../modules/todo/types";
 import { List } from "./components/List";
-import { FilterType } from "./types";
 import {
+  FilterType,
   isFilterTypeAll,
   isFilterTypeActive,
   isFilterTypeCompleted
-} from "../../modules/utils";
+} from "../../modules/filter-todo";
 
 import * as R from "rmwc";
 
