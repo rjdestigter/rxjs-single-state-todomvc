@@ -1,65 +1,82 @@
 import { URL } from "./constants";
 
-import {
-  Ok,
-  Bad,
-  Status,
-  Pending,
-  Todo,
-  Noop,
-  Mutable,
-  TodoOperation,
-  EventType
-} from "./types";
+// Todo
+import { Todo, MutableTodo, TodoOperation, EventType } from "./types";
 
+// Operations
+import { Ok, Bad, Status, Pending, Noop } from "../operations";
+
+// Utilities
 import { take } from "../utils";
 
 /**
- * Mock database
+ * Mock database of Toods
  */
 let todos: Todo[] = [];
 
-const failPattern = [true, false, false, true, true, false, true]
-let failIndex = 0
+/**
+ * Pattern of booleans used to to randomly fail API calls.
+ */
+const failPattern = [true, false, false, true, true, false, true];
 
+/**
+ * Mutuable pointer referencing a boolean in [[failPattern]]
+ */
+let failIndex = 0;
+
+/**
+ * Returns the next "doFail" flag and moves the failIndex
+ * pointer to the next boolean in [[failPattern]]
+ */
 const getNextFailFlag = () => {
-  failIndex += 1
+  failIndex += 1;
 
   if (failIndex > failPattern.length - 1) {
-    failIndex = 0
+    failIndex = 0;
   }
 
-  return failPattern[failIndex]
-}
+  return failPattern[failIndex];
+};
 
+/**
+ * delay
+ * Helper function for creating promise that resolves after `ms` milliseconds.
+ *
+ * @param ms Number of milliseconds to delay resolving the promise.
+ */
 const delay = (ms: number) =>
   new Promise<void>(resolve => setTimeout(resolve, ms));
 
 /**
- * 
+ * API for loading the list of Todos in the database.
  */
 export const read = async () => {
-  const doFail = getNextFailFlag()
+  const doFail = getNextFailFlag();
 
+  // Only make the network call once since we are mocking things here.
   if (todos.length <= 0) {
     const response = await fetch(URL);
     const json: Todo[] = await response.json();
     await delay(1500);
-    todos = take(25)(json).map(todo => ({...todo, completed: false}));
-  } else {
+
+    // Replace the database
+    todos = take(6)(json); //.map(todo => ({...todo, completed: false}));
+  }
+  // Return data from our mocked database [[todos]] after 1 second
+  else {
     await delay(1000);
   }
-  return todos
+  return todos;
 };
 
 /**
- * 
- * @param operation 
+ * API for creating new Todos and storing them in the database.
+ * @param operation
  */
 export const create = async (
   operation: Pending<string>
 ): Promise<Ok<Todo> | Bad<string>> => {
-  const doFail = getNextFailFlag()
+  const doFail = getNextFailFlag();
 
   await delay(1500);
 
@@ -94,13 +111,19 @@ export const create = async (
   };
 };
 
+/**
+ * API for updating Todos in the database
+ *
+ * @param todo
+ * @param operation
+ */
 export const update = async (
   todo: Todo,
   operation: Exclude<TodoOperation, { status: Status.Ok | Status.Pending }>
-): Promise<Ok<Todo, EventType.Save> | Bad<Mutable, EventType.Save>> => {
+): Promise<Ok<Todo, EventType.Save> | Bad<MutableTodo, EventType.Save>> => {
   await delay(1500);
-  const doFail = getNextFailFlag()
-  
+  const doFail = getNextFailFlag();
+
   if (doFail) {
     return {
       status: Status.Bad,
@@ -145,13 +168,19 @@ export const update = async (
   };
 };
 
+/**
+ * API for deleting Todo's from the database
+ *
+ * @param todo
+ * @param operation
+ */
 export const deleet = async (
   todo: Todo,
-  operation: Pending<Mutable, EventType.Delete>, //Exclude<TodoOperation, { status: Status.Ok | Status.Pending }>
-): Promise<Ok<Todo, EventType.Delete> | Bad<Mutable, EventType.Delete>> => {
+  operation: Pending<MutableTodo, EventType.Delete> //Exclude<TodoOperation, { status: Status.Ok | Status.Pending }>
+): Promise<Ok<Todo, EventType.Delete> | Bad<MutableTodo, EventType.Delete>> => {
   await delay(1500);
-  const doFail = getNextFailFlag()
-  
+  const doFail = getNextFailFlag();
+
   if (doFail) {
     return {
       status: Status.Bad,
@@ -161,7 +190,7 @@ export const deleet = async (
     };
   }
 
-  todos = todos.filter(current => current.id !== todo.id)
+  todos = todos.filter(current => current.id !== todo.id);
 
   return {
     status: Status.Ok,

@@ -12,7 +12,7 @@ import {
 import { tap, filter } from "rxjs/operators";
 
 import { filterTypeState$, todosByFilterType$ } from "./apps/todo/observables";
-import { createState, makeTimeTravelable } from "./modules/rxjs-state";
+import { createState, makeTimeTravelable } from "./modules/state";
 
 import { Observable, noop } from "rxjs";
 import {
@@ -25,11 +25,11 @@ import {
   makeNoop,
   toPending,
   isPending,
-  isOk,
   isBad,
-  isNoop
-} from "./modules/todo/utils";
-import { TodoOperation, Todo, Mutable, Noop } from "./modules/todo/types";
+  isNoop,
+  Noop
+} from "./modules/operations";
+import { TodoOperation, Todo, MutableTodo } from "./modules/todo/types";
 import { FilterType } from "./apps/todo/types";
 import { compose, first, second, tuple } from "./modules/utils";
 
@@ -39,7 +39,9 @@ const state$ = createState({
   new: newTodoOperation$
 });
 
-const [timeTravelableState$, setIndex, _, play, pause] = makeTimeTravelable(state$);
+const [timeTravelableState$, setIndex, _, play, pause] = makeTimeTravelable(
+  state$
+);
 
 type Observed<T> = T extends Observable<infer S> ? S : never;
 
@@ -137,7 +139,7 @@ const App = () => {
           )
         )
         .filter(
-          (todo): todo is [Todo, Noop<Mutable>] =>
+          (todo): todo is [Todo, Noop<MutableTodo>] =>
             isNoop(second(todo)) || isBad(second(todo))
         )
         .map(todo =>
@@ -157,10 +159,10 @@ const App = () => {
           )
         )
         .filter(
-          (todo): todo is [Todo, Noop<Mutable>] =>
+          (todo): todo is [Todo, Noop<MutableTodo>] =>
             isNoop(second(todo)) || isBad(second(todo))
         )
-        .forEach(([todo]) => dispatch(makeDeleteEvent(todo.id)));
+        .forEach(([todo]) => dispatch(makeDeleteEvent(todo)));
     };
 
     return (
@@ -198,29 +200,33 @@ const App = () => {
               max={state.max}
               step={1}
             />
-            <div className='controls'>
+            <div className="controls">
               <IconButton
-                theme={state.index === 0 ? undefined : 'secondary'}
+                theme={state.index === 0 ? undefined : "secondary"}
                 icon="fast_rewind"
                 onClick={() => setIndex(0)}
                 disabled={state.index === 0}
               />
               <IconButton
-                theme={state.index === 0 ? undefined : 'secondary'}
+                theme={state.index === 0 ? undefined : "secondary"}
                 icon="skip_previous"
                 onClick={() => setIndex(state.index - 1)}
                 disabled={state.index === 0}
               />
               <IconButton theme="secondary" icon="stop" onClick={pause} />
-              <IconButton theme="secondary" icon="play_circle_filled" onClick={play} />
               <IconButton
-                theme={state.index === state.max ? undefined : 'secondary'}
+                theme="secondary"
+                icon="play_circle_filled"
+                onClick={play}
+              />
+              <IconButton
+                theme={state.index === state.max ? undefined : "secondary"}
                 icon="skip_next"
                 onClick={() => setIndex(state.index + 1)}
                 disabled={state.index === state.max}
               />
               <IconButton
-                theme={state.index === state.max ? undefined : 'secondary'}
+                theme={state.index === state.max ? undefined : "secondary"}
                 icon="fast_forward"
                 onClick={() => setIndex(state.max)}
                 disabled={state.index === state.max}

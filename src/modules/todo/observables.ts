@@ -1,11 +1,9 @@
-import { Subject, from, of, EMPTY, concat } from "rxjs";
-
+// RxJS
+import { Subject, from, of, EMPTY, concat, Observable } from "rxjs";
 import {
   tap,
   map,
   mergeMap,
-  share,
-  withLatestFrom,
   switchMap,
   groupBy,
   timeoutWith,
@@ -15,231 +13,111 @@ import {
   filter
 } from "rxjs/operators";
 
-import { get, set } from "../utils/getset";
+// Utilities
+import { arrayBimap } from "../utils/array";
+import { tuple, compose, thruple, identity } from "../utils";
 
-import { stateOf } from "../rxjs-state";
+// State
+import { stateOf, StateObservable, IS_TUPLE, transactionalStateOf } from "../state";
+
+// API
 import { read, create, update, deleet } from "./api";
+
+// Todo
 import {
   TodoEvent,
   Todo,
   NewTodoOperation,
-  Status,
-  TodoOperation,
   EventType,
   SaveEvent,
   EditEvent,
-  Operation,
-  Noop,
-  OperationalEventTypes,
-  Bad,
-  Mutable,
-  Pending
+  DeleteEvent,
+  FetchEvent,
+  TodoWithOperation
 } from "./types";
-import {
-  isFetchEvent,
-  isEditEvent,
-  isSaveEvent,
-  isDeleteEvent
-} from "./events";
 
+import { isFetchEvent, isEditEvent, isSaveEvent } from "./events";
+
+import { toMutable } from "./utils";
+
+// Operational
+import { makeNoop, isPending, isBad, toPending, isNoop } from "../operations";
+
+// Transaction
+import { TransactionType } from "../transactions";
+
+// Effects
 import {
-  tuple,
-  first,
-  second,
-  compose,
-  curry,
-  thruple,
-  threcond,
-  thirst
-} from "../utils";
-import { makeNoop, isPending, isBad, isOk, toPending, isNoop } from "./utils";
+  resetOkAndBadTodosEffect,
+  RedoableEvent,
+  ResetableOperation,
+  addEffect,
+  updateEffect,
+  runDeleteOutcomeEffect,
+  runSaveOutcomeEffect,
+  runCreateOutcomeEffect
+} from "./effects";
 
 /**
- * Event stream
+ * @private
+ * 
+ * [[Subject]] for dispatching and streaming events.
  */
-export const events$ = new Subject<TodoEvent>();
+const events$ = new Subject<TodoEvent>();
 
 /**
- * Helper function for dispatching to the event stream.
+ * dispatch :: TodoEvent -> ()
+ * 
+ * Function for dispatching to the [[events$]] [[Subject]]
+ * 
+ * @param event An [[EditEvent]], [[SaveEent]], or [[DeleteEvent]].
  */
 export const dispatch = (event: TodoEvent) => {
   console.warn(`Dispatching ${event.type}`);
   events$.next(event);
 };
 
-type TodoWithOperation = [Todo, TodoOperation];
 /**
- * Fetches and streams ToDos
+ * Create a transactional [[StateObservable]] allowing us to use the
+ * setState function (in this case named writeTodos) to either accept an
+ * array of TodoWithOperation or just a single element.
  */
-export const [todos$, storeTodos] = stateOf<TodoWithOperation[]>([], $ =>
-  $.pipe(tap(() => console.log("Streaming Todos")))
+export const [todos$, writeTodos] = transactionalStateOf(
+  [] as TodoWithOperation[],
+  ([todo1], [todo2]) => todo1.id === todo2.id,
+  IS_TUPLE
 );
 
-
-let subs = 0;
-
-const subscribe = todos$.subscribe
-Object.assign(todos$, {
-  subscribe: (...args: any[]) => {
-    const nbr = ++subs;
-
-    console.warn(`Subscribe ${nbr}`)
-    const subscription = subscribe.call(todos$, ...args)
-
-    if (subscription.unsubscribe) {
-      const unsubscribe = subscription.unsubscribe
-
-      Object.assign(subscription, {
-        unsubscribe: (...args: any[]) => {
-          console.info(args)
-          console.error(`Unsubscrube ${nbr}`)
-          subs--;
-          unsubscribe.call(subscription)
-        }
-      })
-    }
-
-    return subscription
-  }
-})
-
 /**
+ * Operator for resetting a todo's operation to Noop
+ * after it was set to Bad or Ok
  *
+ * @param updateOrDeleteEventAndOperation$
  */
-const readTodos$ = () =>
-  from(read()).pipe(
-    withLatestFrom(todos$),
-    map(([next, current]) => {
-      // TODO Filter out incoming todos that have matching ids with todos in state
-      const additional: TodoWithOperation[] = [
-        ...current,
-        ...next.map(todo => {
-          const noopOperation = makeNoop({
-            title: todo.title,
-            completed: todo.completed
-          });
-
-          return tuple(todo, noopOperation);
-        })
-      ];
-
-      return additional;
-    }),
-    tap(storeTodos)
-  );
-
-/** 
- *
- * @param event
- */
-const makeEditEvent$ = (event: EditEvent) =>
-  of(void 0).pipe(
-    withLatestFrom(todos$),
-    map(second),
-    map(todos => {
-      const index = todos.findIndex(([todo]) => todo.id === event.todo.id);
-      const nextTodos = [...todos];
-      nextTodos.splice(index, 1, [event.todo, event.operation]);
-      return nextTodos;
-    }),
-    tap(storeTodos),
-    map(nextTodos => tuple(event, nextTodos))
-  );
-
-type TodoId = number;
-
-/**
- * Operator compositor for dispatching a single updated todo to state
- * @param get - Callback function that given stream S returns a tuple of a [[Todo]] or [[TodoId]] and [[TodoOperation]]
- */
-const storeTodo = <S, O extends TodoOperation, T extends TodoId | Todo>(
-  get: (stream: S) => [Todo | TodoId, O]
+const resetOkAndBadTodos = (
+  updateOrDeleteEventAndOperation$: Observable<
+    [RedoableEvent, ResetableOperation]
+  >
 ) =>
-  mergeMap((stream: S) =>
-    of(stream).pipe(
-      // Combine the stream with the most recent state of the list of todos
-      tap(() => console.error('withLatestFrom')),
-      withLatestFrom(todos$),
-      map(([stream, todos]) => {
-        const [todoOrId, todoOperation] = get(stream);
-
-        // Find the index of the operated todo in state
-        const index = todos.findIndex(
-          ([current]) =>
-            current.id ===
-            (typeof todoOrId === "number" ? todoOrId : todoOrId.id)
-        );
-
-        if (index >= 0) {
-          // Update state with data from the operated todo
-          const nextTodos = [...todos];
-          nextTodos.splice(index, 1, [
-            typeof todoOrId === "number" ? todos[index][0] : todoOrId,
-            todoOperation
-          ]);
-
-          return thruple(todoOperation, nextTodos, todoOrId);
-        }
-
-        return thruple(todoOperation, todos, todoOrId);
-      }),
-      tap(
-        compose(
-          storeTodos,
-          threcond
-        )
-      )
-    )
+  updateOrDeleteEventAndOperation$.pipe(
+    delay(1000),
+    tap(resetOkAndBadTodosEffect(writeTodos))
   );
 
 /**
+ * Main function for handling incoming events
+ * Kind of like a reducer in Redux.
  *
- * @param event
- */
-const makeSaveEvent$ = (event: SaveEvent) =>
-  concat(
-    // Update state for this todo to status "Pending"
-    of(toPending(event.operation, EventType.Save)).pipe(
-      tap(() => console.warn(`Storing pending todo`)),
-
-      storeTodo(stream => tuple(event.todo, stream)),
-      map(data => threcond(data)),
-      map(data => curry(tuple)(event)(data))
-    ),
-    // Continue with updating the the todo on the server
-    from(update(event.todo, event.operation)).pipe(
-      tap(console.clear),
-      storeTodo(stream => {
-        // const foo = isOk(stream)
-        //   ? tuple(stream.state, stream)
-        //   : tuple(event.todo, stream);
-        return tuple(isOk(stream) ? stream.state : event.todo, stream);
-        // return [event.todo, stream];
-      }),
-      map(thirst),
-      // or 5000 if the operation was Bad
-      // Delay the stream by 750ms if the operation was Ok
-      mergeMap(stream => of(stream).pipe(delay(isOk(stream) ? 750 : 5000))),
-
-      // Reset the todo in state to status "Noop"
-      storeTodo(stream => tuple(event.todo.id, makeNoop(stream.state))),
-      map(nextTodos => tuple(event, nextTodos))
-    )
-  );
-
-/**
- *
+ * It groups the events by type Fetch or the id of the todo.
+ * and uses switchMap for each group.
  */
 export const handleEvents$ = events$.pipe(
-  tap(event => console.warn(`Handle event ${event.type}`)),
   groupBy(
     event => {
       if (isFetchEvent(event)) {
         return EventType.Fetch;
-      } else if (isEditEvent(event) || isSaveEvent(event)) {
+      } else {
         return event.todo.id;
-      } else if (isDeleteEvent(event)) {
-        return event.id;
       }
     },
     event => event,
@@ -253,74 +131,126 @@ export const handleEvents$ = events$.pipe(
     groupedEvent$.pipe(
       switchMap(event => {
         if (isFetchEvent(event)) {
-          return readTodos$().pipe(map(todos => tuple(event, todos)));
+          return handleReadEvent(event);
         } else if (isEditEvent(event)) {
-          return makeEditEvent$(event);
+          return handleEditEvent(event);
         } else if (isSaveEvent(event)) {
-          return makeSaveEvent$(event);
+          return handleSaveEvent(event);
         }
 
-        const getId = get("id");
-
-        return of(void 0).pipe(
-          withLatestFrom(todos$),
-          map(second),
-          map(todos => todos.find(item => getId(first(item)) === getId(event))),
-          mergeMap(maybeTodo =>
-            maybeTodo
-              ? of(maybeTodo).pipe(
-                  filter(
-                    (
-                      data
-                    ): data is [
-                      Todo,
-                      Extract<
-                        TodoOperation,
-                        { status: Status.Noop | Status.Bad }
-                      >
-                    ] => isNoop(second(data)) || isBad(second(data))
-                  ),
-                  // I wish TypeScript had better type inference
-                  // storeTodo(applyToSecond(curry(flip(toPendingWithAction))(EventType.Delete))),
-                  storeTodo(([todo, operation]) =>
-                    tuple(todo, toPending(operation, EventType.Delete))
-                  ),
-                  mergeMap(([pendingOperation, _, todo]) =>
-                    from(
-                      deleet(
-                        todo as Todo,
-                        pendingOperation as Pending<Mutable, EventType.Delete>
-                      )
-                    ).pipe(
-                      mergeMap(stream => {
-                        if (isOk(stream)) {
-                          return of(void 0).pipe(
-                            withLatestFrom(todos$),
-                            map(second),
-                            tap(todos =>
-                              storeTodos(
-                                todos.filter(
-                                  ([todo]) => todo.id !== stream.state.id
-                                )
-                              )
-                            )
-                          );
-                        }
-
-                        return of(void 0).pipe(
-                          storeTodo(() => [first(maybeTodo), stream])
-                        );
-                      })
-                    )
-                  )
-                )
-              : of(tuple(event, undefined))
-          )
-        );
+        return handleDeleteEvent(event);
       })
     )
   )
 );
+
+// Because TypeScript is unable to infer this bois abstractions.
+type Id<T> = (id: T) => T;
+
+/**
+ * Handles incoming [[FetchEvent]] events that have been
+ * dispatched to the [[events$]] [[Subject]]
+ *
+ * It immediately calls the API for requesting Todos from
+ * the server and updates state with the received todos
+ * by running the addEffect
+ *
+ * @param event The [[FetchEvent]] event
+ */
+export const handleReadEvent = (event: FetchEvent) =>
+  from(read()).pipe(
+    // map(arrayMap(curry(tuple))),
+    map(
+      arrayBimap(identity as Id<Todo>)(
+        // f after g
+        compose(
+          makeNoop, // f
+          toMutable // g
+        )
+      )
+    ),
+    tap(addEffect(writeTodos))
+  );
+
+/**
+ * Handle incoming events requesting [[Todo]](s) be deleted
+ * from the database.
+ *
+ * State is updating first to indicate "in progress". Then the
+ * API for deleting Todos is called. Once the call resolves
+ * state is updated to indicate failure or success. After a second
+ * state is updated once again to reset the operation so that the
+ * UI removes the indicators of failure or success.
+ *
+ * @param event - The delete event [[DeleteEvent]]
+ */
+const handleDeleteEvent = (event: DeleteEvent) => {
+  const operation = toPending(
+    makeNoop(toMutable(event.todo)),
+    EventType.Delete as const
+  );
+
+  const promise = deleet(event.todo, operation);
+
+  return concat(
+    of(tuple(event.todo, operation)).pipe(tap(updateEffect(writeTodos))),
+    from(promise).pipe(
+      tap(runDeleteOutcomeEffect(writeTodos)(event.todo)),
+      filter(isBad),
+      map(outcome => tuple(event, outcome)),
+      resetOkAndBadTodos
+    )
+  );
+};
+
+/**
+ * Responsds to the [[EditEvent]] dispatched on the [[events$]]
+ * [[Subject]] after the user types to change the title of
+ * a [[Todo]]
+ *
+ * The only effect here is updating state. No API calls
+ *
+ * @param event [[EditEvent]]
+ */
+const handleEditEvent = (event: EditEvent) => {
+  // Reset the Todo's operational status if the user
+  // started editing after a success or failure operation
+  const operation = isNoop(event.operation)
+    ? event.operation
+    : makeNoop(event.operation.state);
+
+  return of(tuple(event.todo, operation)).pipe(tap(updateEffect(writeTodos)));
+};
+
+/**
+ * Handles incoming [[SaveEvent]] events that are dispatched to [[event$]]
+ *
+ * - It first updates state to indicate the Todo is currently being saved.
+ * - Then calls the API for updating existing todos in the database.
+ * - Passes the results to runSaveOutcomeEffect to update state accordingly
+ * - And resets after a delay using [[resetOkAndBadTodos]]
+ *
+ * @param event
+ */
+const handleSaveEvent = (event: SaveEvent) => {
+  const operation = toPending(event.operation, EventType.Save as const);
+
+  const updateTransaction = {
+    type: TransactionType.Update as const,
+    payload: tuple(event.todo, operation)
+  };
+
+  const promise = update(event.todo, event.operation);
+
+  return concat(
+    of(void 0).pipe(tap(() => writeTodos(updateTransaction))),
+    from(promise).pipe(
+      tap(runSaveOutcomeEffect(writeTodos)(event.todo)),
+      map(outcome => tuple(event, outcome)),
+      resetOkAndBadTodos
+    )
+  );
+};
 
 /**
  * Event stream filtered by type FETCH
@@ -328,32 +258,36 @@ export const handleEvents$ = events$.pipe(
 export const eventsHandler$ = handleEvents$;
 
 /**
+ * I'm destructuring the result of `stateOf` so that I can re-export
+ * a piped version of `_newTodoOperation`
+ */
+const [_newTodoOperation$, setNewTodoOperation, getNewTodoOperation] = stateOf(
+  makeNoop("") as NewTodoOperation
+);
+
+/**
+ * [[StateObservable]] that handles new todos the user wants to create.
+ * It starts with an empty "Noop" operation of a string (title)
+ * and any time `setNewTodoOperation` is called the stream checks if the status
+ * has changed to "pending" and if so will start calling the API
+ * for storing the new todo in the datatabase.
+ *
+ * Using [[thruple]] to re-export everything as a [[StateObservable]]
+ *
  *
  */
-export const newTodoOperation$ = stateOf<NewTodoOperation>(
-  {
-    status: Status.Noop,
-    state: ""
-  },
-  state$ =>
-    state$.pipe(
-      switchMap(state =>
-        isPending(state)
-          ? from(create(state)).pipe(
-              withLatestFrom(todos$),
-              tap(([nextState, todos]) => {
-                if (isOk(nextState))
-                  storeTodos([
-                    ...todos,
-                    tuple(nextState.state, makeNoop(nextState.state))
-                  ]);
-              }),
-              map(first),
-              map(nextState => (isBad(nextState) ? nextState : makeNoop(""))),
-              startWith(state)
-            )
-          : of(state)
-      )
-      // share()
+export const newTodoOperation$ = thruple(
+  _newTodoOperation$.pipe(
+    switchMap(state =>
+      isPending(state)
+        ? from(create(state)).pipe(
+            tap(runCreateOutcomeEffect(writeTodos)),
+            map(nextState => (isBad(nextState) ? nextState : makeNoop(""))),
+            startWith(state)
+          )
+        : of(state)
     )
-);
+  ),
+  setNewTodoOperation,
+  getNewTodoOperation
+) as StateObservable<NewTodoOperation>;

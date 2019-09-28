@@ -129,6 +129,7 @@ export const compose = <A, B, C>(f: (b: B) => C, g: (a: A) => B) => (a: A) =>
  */
 export const flip = <A, B, C>(f: (a: A, b: B) => C) => (b: B, a: A) => f(a, b)
 
+
 /**
  * 
  * @param f 

@@ -7,10 +7,10 @@ import {
   TodoOperation,
   EditEvent,
   Todo,
-  Noop,
-  Bad,
   OperationalEventTypes
 } from "./types";
+
+import { Noop, Bad } from '../operations'
 
 /**
  * makeFetchEvent
@@ -47,8 +47,8 @@ export const makeSaveEvent = (
 /**
  * makeDeleteEvent
  */
-export const makeDeleteEvent = (id: number): DeleteEvent => {
-  return { type: EventType.Delete, id };
+export const makeDeleteEvent = (todo: Todo): DeleteEvent => {
+  return { type: EventType.Delete, todo };
 };
 
 /**

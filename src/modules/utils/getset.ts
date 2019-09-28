@@ -1,6 +1,6 @@
 export function get<K extends string>(prop: K) {
-  function getter<T extends { [P in K]?: any }>(object: T): T[typeof prop]
-  function getter<T extends { [P in K]: any }>(object: T) {
+  // function getter<T extends { [P in K]?: T[K] }>(object: T): T[K]
+  function getter<T extends { [P in K]: T[K] }>(object: T): T[K] {
     return object[prop]
   }
 
@@ -8,11 +8,13 @@ export function get<K extends string>(prop: K) {
 }
 
 export function set<K extends string>(prop: K) {
-  function setter<T extends { [P in K]?: any }>(object: T, value: T[typeof prop]): T
-  function setter<T extends { [P in K]: any }>(object: T, value: T[typeof prop]): T {
-    return Object.assign(object, {
-      [prop]: value
-    })
+  // function setter<T extends { [P in K]?: T[K] }>(object: T): (value: T[K]) => T
+  function setter<T extends { [P in K]: T[K] }>(object: T): (value: T[K]) => T {
+    return function (value: T[K]): T {
+      return Object.assign(object, {
+        [prop]: value
+      })
+    }
   }
 
   return setter

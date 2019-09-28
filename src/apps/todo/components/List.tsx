@@ -1,18 +1,19 @@
 import * as React from "react";
-import { Todo, TodoOperation, NewTodoOperation, Status, Mutable, EventType } from "../../../modules/todo/types";
+import {
+  Todo,
+  TodoOperation,
+  NewTodoOperation,
+  MutableTodo,
+  EventType
+} from "../../../modules/todo/types";
 import * as R from "rmwc";
 
 import { Item } from "./Item";
-import {
-  isOk,
-  isPending,
-  isBad
-} from "../../../modules/todo/utils";
+import { isOk, isPending, isBad, Status } from "../../../modules/operations";
 import { noop } from "rxjs";
 
 export const renderList = (props: PropsList) =>
   props.todos.map(([todo, operation]) => {
-
     return (
       <Item
         key={todo.id}
@@ -20,18 +21,24 @@ export const renderList = (props: PropsList) =>
         onEdit={props.onEdit(todo, operation)}
         onSave={props.onSave(todo, operation)}
         status={operation && operation.status}
-        isDeleting={isPending(operation) && operation.action === EventType.Delete}
-        error={
-          (operation && isBad(operation) && operation.error) || undefined
+        isDeleting={
+          isPending(operation) && operation.action === EventType.Delete
         }
+        error={(operation && isBad(operation) && operation.error) || undefined}
       />
     );
   });
 
 export type PropsList = {
-  todos: [Todo, TodoOperation][],
-  onEdit: (todo: Todo, operation: TodoOperation) => (state: Partial<Mutable>) => void;
-  onSave: (todo: Todo, operation: TodoOperation) => (state?: Partial<Mutable>) => void;
+  todos: [Todo, TodoOperation][];
+  onEdit: (
+    todo: Todo,
+    operation: TodoOperation
+  ) => (state: Partial<MutableTodo>) => void;
+  onSave: (
+    todo: Todo,
+    operation: TodoOperation
+  ) => (state?: Partial<MutableTodo>) => void;
   new: NewTodoOperation;
   onChangeNew: (title: string) => void;
   onSubmitNew: () => void;
@@ -88,10 +95,12 @@ export const List = (props: PropsList) => {
             placeholder="Where do you want to go today?"
             style={{ height: "100%" }}
             onChange={onChangeNew}
-            value={props.new.state || ''}
+            value={props.new.state || ""}
             onKeyUp={evt => evt.keyCode === 13 && props.onSubmitNew()}
             autoFocus
-            trailingIcon={isBad(props.new) ? {icon: 'error', theme: 'error'} : undefined}
+            trailingIcon={
+              isBad(props.new) ? { icon: "error", theme: "error" } : undefined
+            }
           />
         )}
       </R.ListItem>

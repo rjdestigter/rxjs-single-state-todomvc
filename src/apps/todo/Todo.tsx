@@ -1,5 +1,10 @@
 import * as React from "react";
-import { Todo, Status, TodoOperation, NewTodoOperation, Mutable } from "../../modules/todo/types";
+import {
+  Todo,
+  TodoOperation,
+  NewTodoOperation,
+  MutableTodo
+} from "../../modules/todo/types";
 import { List } from "./components/List";
 import { FilterType } from "./types";
 import {
@@ -13,10 +18,16 @@ import * as R from "rmwc";
 export interface PropsTodo {
   todos: [Todo, TodoOperation][];
   filterType: FilterType;
-  new: Exclude<NewTodoOperation, { status: Status.Ok }>;
+  new: NewTodoOperation;
   onChangeFilterType: (filterType: FilterType) => void;
-  onEdit: (todo: Todo, operation: TodoOperation) => (state: Partial<Mutable>) => void;
-  onSave: (todo: Todo, operation: TodoOperation) => (state?: Partial<Mutable>) => void;
+  onEdit: (
+    todo: Todo,
+    operation: TodoOperation
+  ) => (state: Partial<MutableTodo>) => void;
+  onSave: (
+    todo: Todo,
+    operation: TodoOperation
+  ) => (state?: Partial<MutableTodo>) => void;
   onChangeNew: (title: string) => void;
   onSubmitNew: () => void;
   onCompleteAll: () => void;
@@ -39,7 +50,7 @@ export default (props: PropsTodo) => {
 
   return (
     <>
-      <div style={{ textAlign: "center", marginTop: 15}}>
+      <div style={{ textAlign: "center", marginTop: 15 }}>
         <R.Typography use="headline1" theme="secondary">
           todos
         </R.Typography>
@@ -78,7 +89,7 @@ export default (props: PropsTodo) => {
           <div>
             <R.Button onClick={props.onClearComplete}>Clear completed</R.Button>
           </div>
-          <R.Typography use="caption" style={{color: '#999  '}}>
+          <R.Typography use="caption" style={{ color: "#999  " }}>
             <strong>
               {props.todos.filter(([todo]) => !todo.completed).length}
             </strong>{" "}

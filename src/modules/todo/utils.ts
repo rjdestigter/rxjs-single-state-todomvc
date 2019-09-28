@@ -1,57 +1,31 @@
-import {
-  Status,
-  Operation,
-  Todo,
-  Noop,
-  Bad,
-  Pending,
-} from "./types";
-import { number } from "prop-types";
+import { Todo, MutableTodo } from "./types";
+import { get, set } from "../utils/getset";
 
-// Assertions
-const makeIsStatus = <T extends Status>(statusType: T) => (
-  checkedStatus: Status
-): checkedStatus is T => statusType === checkedStatus;
+/**
+ * @private
+ * 
+ * Constant used for creating empty, new [[Todo]]s
+ */
+const mutuableTodo: MutableTodo = { completed: false, title: "" };
 
-export const statusTypeIsOk = makeIsStatus(Status.Ok);
-export const statusTypeIsBad = makeIsStatus(Status.Bad);
-export const statusTypeIsNoop = makeIsStatus(Status.Noop);
-export const statusTypeIsPending = makeIsStatus(Status.Pending);
+/**
+ * toMutable :: [[Todo]] -> [[MutableTodo]]
+ * 
+ * Helper function for extracting `completed` and `title` from todos.
+ * This is mostly used to create data for operations.
+ * 
+ * @param todo - The todo object to convert.
+ */
+export const toMutable = (todo: Todo): MutableTodo =>
+  setTitle(setCompleted(mutuableTodo)(getCompleted(todo)))(getTitle(todo));
 
-// type Foo = <S, O extends Operation<S>, A extends O['status']>
+// Experimental code
+export const getId = get("id");
+export const getTitle = get("title");
+export const getCompleted = get("completed");
 
-export const makeIsOperationOfStatus = <S extends Status>(
-  f: (statusType: Status) => statusType is S
-) => <O extends { status: Status }>(operation: O): operation is Extract<O, { status: S }> => f(operation.status)
-
-export const isOk = makeIsOperationOfStatus(statusTypeIsOk);
-export const isBad = makeIsOperationOfStatus(statusTypeIsBad);
-export const isNoop = makeIsOperationOfStatus(statusTypeIsNoop);
-export const isPending = makeIsOperationOfStatus(statusTypeIsPending);
-
-export const makeNoop = <T>(state: T): Noop<T> => {
-  return {
-    status: Status.Noop,
-    state,
-  }
-}
-
-// export const toPendingWithAction = <T, A, B extends A>(operation: Noop<T> | Bad<T, A>, action: B): Pending<T, B> => toPending(operation, action)
+export const setId = set("id");
+export const setTitle = set("title");
+export const setCompleted = set("completed");
 
 
-export function toPending<T>(operation: Noop<T> | Bad<T>): Pending<T>
-export function toPending<T, A>(operation: Noop<T> | Bad<T, A>, action: A): Pending<T, A>
-export function toPending<T, A>(operation: Noop<T> | Bad<T, A>, action?: A): Pending<T, any> {
-  if (action != null) {
-    return {
-      status: Status.Pending,
-      state: operation.state,
-      action,
-    }
-  }
-
-  return {
-    status: Status.Pending,
-    state: operation.state,
-  }
-}

@@ -82,8 +82,6 @@ export const makeTimeTravelable = <T>(observable$: Observable<T>) => {
   const replay$ = playSubject.pipe(
     withLatestFrom(stateWithHistory$),
     switchMap(([mode, s]) => {
-      // debugger;
-      // console.log("switch", mode, index);
       if (mode === "PLAY") {
         return concat(of(s), stateWithHistory$).pipe(
           switchMap(([state, history, index]) => {
