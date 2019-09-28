@@ -64,43 +64,45 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<p>This project was bootstrapped with <a href="https://github.com/facebook/create-react-app">Create React App</a>.</p>
-				<a href="#available-scripts" id="available-scripts" style="color: inherit; text-decoration: none;">
-					<h2>Available Scripts</h2>
+				<blockquote>
+					<p>This project was bootstrapped with <a href="https://github.com/facebook/create-react-app">Create React App</a>.</p>
+				</blockquote>
+				<a href="#why" id="why" style="color: inherit; text-decoration: none;">
+					<h1>Why</h1>
 				</a>
-				<p>In the project directory, you can run:</p>
-				<a href="#codenpm-startcode" id="codenpm-startcode" style="color: inherit; text-decoration: none;">
-					<h3><code>npm start</code></h3>
+				<p>I built this take on TodoMVC to learn RxJS. I specifically set out to develop a single state solution and to experiment with serializable, time-travelable state by composing observables.</p>
+				<p>I ended up with a few nice architectural solutions that I would like to talk about:</p>
+				<ul>
+					<li>Creating stateful observables using RxJS&#39;s <code>BehaviourSubject</code></li>
+					<li>Composing a map of observable into a single state observable.</li>
+					<li>Using get/set defenitions for stateful observables allowing developers to update state in a mutuabale like fashion whil maintaining immutability.</li>
+					<li>Abstracting operational state from model state.</li>
+					<li>Using transactions to read, update, and remove from state.</li>
+				</ul>
+				<p>Throughout the process I also experimented with point-free style and other functional programming concepts.</p>
+				<a href="#how-does-it-work" id="how-does-it-work" style="color: inherit; text-decoration: none;">
+					<h1>How Does It Work</h1>
 				</a>
-				<p>Runs the app in the development mode.<br>
-				Open <a href="http://localhost:3000">http://localhost:3000</a> to view it in the browser.</p>
-				<p>The page will reload if you make edits.<br>
-				You will also see any lint errors in the console.</p>
-				<a href="#codenpm-testcode" id="codenpm-testcode" style="color: inherit; text-decoration: none;">
-					<h3><code>npm test</code></h3>
+				<a href="#stateful-observables" id="stateful-observables" style="color: inherit; text-decoration: none;">
+					<h2>Stateful observables</h2>
 				</a>
-				<p>Launches the test runner in the interactive watch mode.<br>
-				See the section about <a href="https://facebook.github.io/create-react-app/docs/running-tests">running tests</a> for more information.</p>
-				<a href="#codenpm-run-buildcode" id="codenpm-run-buildcode" style="color: inherit; text-decoration: none;">
-					<h3><code>npm run build</code></h3>
+				<p>TODO</p>
+				<a href="#a-single-state-observable" id="a-single-state-observable" style="color: inherit; text-decoration: none;">
+					<h2>A single state observable</h2>
 				</a>
-				<p>Builds the app for production to the <code>build</code> folder.<br>
-				It correctly bundles React in production mode and optimizes the build for the best performance.</p>
-				<p>The build is minified and the filenames include the hashes.<br>
-				Your app is ready to be deployed!</p>
-				<p>See the section about <a href="https://facebook.github.io/create-react-app/docs/deployment">deployment</a> for more information.</p>
-				<a href="#codenpm-run-ejectcode" id="codenpm-run-ejectcode" style="color: inherit; text-decoration: none;">
-					<h3><code>npm run eject</code></h3>
+				<p>TODO</p>
+				<a href="#mutable-yet-immutable" id="mutable-yet-immutable" style="color: inherit; text-decoration: none;">
+					<h2>Mutable yet immutable</h2>
 				</a>
-				<p><strong>Note: this is a one-way operation. Once you <code>eject</code>, you can’t go back!</strong></p>
-				<p>If you aren’t satisfied with the build tool and configuration choices, you can <code>eject</code> at any time. This command will remove the single build dependency from your project.</p>
-				<p>Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except <code>eject</code> will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.</p>
-				<p>You don’t have to ever use <code>eject</code>. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.</p>
-				<a href="#learn-more" id="learn-more" style="color: inherit; text-decoration: none;">
-					<h2>Learn More</h2>
+				<p>TODO</p>
+				<a href="#operational-state" id="operational-state" style="color: inherit; text-decoration: none;">
+					<h2>Operational state</h2>
 				</a>
-				<p>You can learn more in the <a href="https://facebook.github.io/create-react-app/docs/getting-started">Create React App documentation</a>.</p>
-				<p>To learn React, check out the <a href="https://reactjs.org/">React documentation</a>.</p>
+				<p>TODO</p>
+				<a href="#transactions" id="transactions" style="color: inherit; text-decoration: none;">
+					<h2>Transactions</h2>
+				</a>
+				<p>TODO</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -230,25 +232,10 @@
 						<a href="modules/_src_modules_transactions_index_.html">"src/modules/transactions/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_src_modules_transactions_types_.html">"src/modules/transactions/types"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="modules/_src_modules_transactions_utils_.html">"src/modules/transactions/utils"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_src_modules_utils_array_.html">"src/modules/utils/array"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_src_modules_utils_assert_.html">"src/modules/utils/assert"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_src_modules_utils_function_.html">"src/modules/utils/function"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_src_modules_utils_getset_.html">"src/modules/utils/getset"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_src_modules_utils_index_.html">"src/modules/utils/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_src_modules_utils_observable_.html">"src/modules/utils/observable"</a>
@@ -261,6 +248,12 @@
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_src_serviceworker_.html">"src/service<wbr>Worker"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/transactions.html">transactions</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/utils.html">utils</a>
 					</li>
 					<li class="label tsd-is-external">
 						<span>Externals</span>

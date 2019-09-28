@@ -100,9 +100,14 @@
 					<div class="tsd-signature tsd-kind-icon">Thruple&lt;A, B, C&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">B</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">C</span><span class="tsd-signature-symbol">]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L5">src/modules/utils/tuple.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L15">src/modules/utils/tuple.ts:15</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Thruple. Array with 3 elements</p>
+						</div>
+					</div>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
 						<li>
@@ -122,9 +127,14 @@
 					<div class="tsd-signature tsd-kind-icon">Tuple&lt;A, B&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">B</span><span class="tsd-signature-symbol">]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L3">src/modules/utils/tuple.ts:3</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L10">src/modules/utils/tuple.ts:10</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Tuple. Array with 2 elements.</p>
+						</div>
+					</div>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
 						<li>
@@ -148,12 +158,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L56">src/modules/utils/tuple.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L83">src/modules/utils/tuple.ts:83</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>applyToSecond :: (a -&gt; b) -&gt; (t, a) -&gt; (t, b)</p>
+									<pre><code class="language-hs"><span class="hljs-title">applyToSecond</span> :: (a -&gt; b) -&gt; (t, a) -&gt; (t, b)</code></pre>
 								</div>
 								<p>There&#39;s gotta be an official name for this.
 								Applies function f to the second element in a tuple.</p>
@@ -187,19 +197,21 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L12">src/modules/utils/tuple.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L26">src/modules/utils/tuple.ts:26</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>first :: (a, b) -&gt; a</p>
+									<pre><code class="language-hs"><span class="hljs-title">first</span> :: (a, b) -&gt; a</code></pre>
 								</div>
-								<p>Returns the first element in a tuple.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>A</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of the first element in the tuple.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -209,6 +221,7 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">A</span></h4>
+							<p>The first element in a tuple.</p>
 						</li>
 					</ul>
 				</section>
@@ -222,14 +235,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L26">src/modules/utils/tuple.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L45">src/modules/utils/tuple.ts:45</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Returns the second element in a tuple.</p>
 								</div>
-								<p>second :: ( (a, b) -&gt; b)</p>
+								<pre><code class="language-hs"><span class="hljs-title">second</span> :: ( (a, b) -&gt; b)</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -257,12 +270,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L19">src/modules/utils/tuple.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L36">src/modules/utils/tuple.ts:36</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>thirst :: (a, b, c) -&gt; a</p>
+									<pre><code class="language-hs"><span class="hljs-title">thirst</span> :: (a, b, c) -&gt; a</code></pre>
 								</div>
 								<p>Returns the first element in a thruple.</p>
 							</div>
@@ -292,12 +305,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L33">src/modules/utils/tuple.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L54">src/modules/utils/tuple.ts:54</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>threcond :: (a, b, c) -&gt; b</p>
+									<pre><code class="language-hs"><span class="hljs-title">threcond</span> :: (a, b, c) -&gt; b</code></pre>
 								</div>
 								<p>Like <a href="_src_modules_utils_tuple_.html#second">second</a>. But for thruples.</p>
 							</div>
@@ -327,12 +340,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L47">src/modules/utils/tuple.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L72">src/modules/utils/tuple.ts:72</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>thruple :: a -&gt; b -&gt; c -&gt; (a, b, c)</p>
+									<pre><code class="language-hs"><span class="hljs-title">thruple</span> :: a -&gt; b -&gt; c -&gt; (a, b, c)</code></pre>
 								</div>
 								<p>Create a thruple given three values.</p>
 							</div>
@@ -374,12 +387,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/139aeb4/src/modules/utils/tuple.ts#L40">src/modules/utils/tuple.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/utils/tuple.ts#L63">src/modules/utils/tuple.ts:63</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>tuple :: a -&gt; b -&gt; (a, b)</p>
+									<pre><code class="language-hs"><span class="hljs-title">tuple</span> :: a -&gt; b -&gt; (a, b)</code></pre>
 								</div>
 								<p>Create a tuple given two values.</p>
 							</div>
