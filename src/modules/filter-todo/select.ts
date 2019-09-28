@@ -9,6 +9,7 @@ import { isFilterTypeActive, isFilterTypeCompleted } from './assert'
  * 
  * Given a type of filter returns a function that filters a list of tuples of (Todo, TodoOperation)
  * 
+ */
 export const selectTodoFilter = (filterType: FilterType) =>
   isFilterTypeActive(filterType)
     ? filterActiveTodos
