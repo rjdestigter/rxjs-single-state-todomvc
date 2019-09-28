@@ -1,26 +1,22 @@
 import React from "react";
-
-import TodoApp from "./apps/todo/Todo";
+import { noop } from 'rxjs'
+import { tap } from "rxjs/operators";
 import { Slider, IconButton } from "rmwc";
 
+import TodoApp from "./apps/todo/Todo";
+
+// Todo
 import {
   dispatch,
-  newTodoOperation$,
-  eventsHandler$
-} from "./modules/todo/observables";
-
-import { tap } from "rxjs/operators";
-
-import { todosByFilterType$ } from "./apps/todo/observables";
-import { createState, makeTimeTravelable } from "./modules/state";
-
-import { Observable, noop } from "rxjs";
-import {
+  eventsHandler$,
   makeFetchEvent,
   makeSaveEvent,
   makeEditEvent,
-  makeDeleteEvent
-} from "./modules/todo/events";
+  makeDeleteEvent,
+  TodoOperation, Todo, MutableTodo
+} from "./modules/todo";
+
+// Operations
 import {
   makeNoop,
   toPending,
@@ -29,30 +25,15 @@ import {
   isNoop,
   Noop
 } from "./modules/operations";
-import { TodoOperation, Todo, MutableTodo } from "./modules/todo/types";
-import { FilterType, filterTypeState$ } from "./modules/filter-todo";
+
+import { FilterType } from "./modules/filter-todo";
+
 import { compose, first, second, tuple } from "./modules/utils";
 
-const state$ = createState({
-  todos: todosByFilterType$,
-  filterType: filterTypeState$,
-  new: newTodoOperation$
-});
-
-const [timeTravelableState$, setIndex, _, play, pause] = makeTimeTravelable(
-  state$
-);
-
-type Observed<T> = T extends Observable<infer S> ? S : never;
-
-type State = {
-  data: Observed<typeof state$> | undefined;
-  index: number;
-  max: number;
-};
+// Apps
+import { State, timeTravelableState$, setIndex, _, play, pause } from './apps/todo/state'
 
 const App = () => {
-  console.log("Render App");
   const [state, setState] = React.useState<State>({
     data: undefined,
     index: -1,
