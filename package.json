@@ -76,7 +76,8 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "docs": "typedoc ./src"
   },
   "eslintConfig": {
     "extends": "react-app"

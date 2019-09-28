@@ -67,16 +67,18 @@ import {
 /**
  * @private
  *
- * [[Subject]] for dispatching and streaming events.
+ * `Subject` for dispatching and streaming events.
  */
 const events$ = new Subject<TodoEvent>();
 
 /**
+ * ```hs
  * dispatch :: TodoEvent -> ()
+ * ```
  *
- * Function for dispatching to the [[events$]] [[Subject]]
+ * Function for dispatching to the [[events$]] `Subject`
  *
- * @param event An [[EditEvent]], [[SaveEent]], or [[DeleteEvent]].
+ * @param event An [[EditEvent]], [[SaveEvent]], or [[DeleteEvent]].
  */
 export const dispatch = (event: TodoEvent) => {
   console.warn(`Dispatching ${event.type}`);
@@ -84,14 +86,23 @@ export const dispatch = (event: TodoEvent) => {
 };
 
 /**
+ * ```hs
  * dispatchFetch :: () -> void
+ * ```
+ * 
+ * Dispatches the [[FetchEvent]] to the [[events$]] `Subject`.
  */
 export const dispatchFetch = () => dispatch(makeFetchEvent());
 
 /**
+ * ```hs
+ * [todos$, writeTodos] :: (Observable [[TodoWithOperation[]]], TodoWithOperation -> void)
+ * ```
+ * 
  * Create a transactional [[StateObservable]] allowing us to use the
- * setState function (in this case named writeTodos) to either accept an
- * array of TodoWithOperation or just a single element.
+ * setState function _(in this case named writeTodos)_ to either accept
+ * state transactions who's payload is an array of [[TodoWithOperation]]
+ * or just a single element.
  */
 export const [todos$, writeTodos] = transactionalStateOf(
   [] as TodoWithOperation[],
@@ -100,8 +111,12 @@ export const [todos$, writeTodos] = transactionalStateOf(
 );
 
 /**
- * Operator for resetting a todo's operation to Noop
- * after it was set to Bad or Ok
+ * ```hs
+ * resetOkAndBadTodos :: Observable (RedoableEven, ResetableOperatio) -> Observable (RedoableEven, ResetableOperatio)
+ * ```
+ * 
+ * Operator for resetting a [[Todo]]'s [[TodoOperation]] to [[Noop]]
+ * after it was set to [[Bad]] or [[Ok]]
  *
  * @param updateOrDeleteEventAndOperation$
  */
@@ -109,18 +124,22 @@ const resetOkAndBadTodos = (
   updateOrDeleteEventAndOperation$: Observable<
     [RedoableEvent, ResetableOperation]
   >
-) =>
+): Observable<[RedoableEvent, ResetableOperation]> =>
   updateOrDeleteEventAndOperation$.pipe(
     delay(1000),
     tap(resetOkAndBadTodosEffect(writeTodos))
   );
 
 /**
- * Main function for handling incoming events
- * Kind of like a reducer in Redux.
+ * ```hs
+ * handleEvents$ :: Observable ()
+ * ```
+ * 
+ * Main observable for handling incoming events. Kind of like a
+ * a reducer in redux.
  *
- * It groups the events by type Fetch or the id of the todo.
- * and uses switchMap for each group.
+ * It groups the events by type [[EventType.Fetch]] or the `id` of the [[Todo]].
+ * and uses `switchMap` for each group.
  */
 export const handleEvents$ = events$.pipe(
   groupBy(
@@ -152,7 +171,8 @@ export const handleEvents$ = events$.pipe(
         return handleDeleteEvent(event);
       })
     )
-  )
+  ),
+  ignoreElements()
 );
 
 // Because TypeScript is unable to infer this bois abstractions.
@@ -160,7 +180,7 @@ type Id<T> = (id: T) => T;
 
 /**
  * Handles incoming [[FetchEvent]] events that have been
- * dispatched to the [[events$]] [[Subject]]
+ * dispatched to the [[events$]] `Subject`
  *
  * It immediately calls the API for requesting Todos from
  * the server and updates state with the received todos
@@ -198,6 +218,7 @@ export const handleReadEvent = (event: FetchEvent) =>
 const handleDeleteEvent = (event: DeleteEvent) => {
   const operation = toPending(
     makeNoop(toMutable(event.todo)),
+    // @ts-ignore
     EventType.Delete as const
   );
 
@@ -216,7 +237,7 @@ const handleDeleteEvent = (event: DeleteEvent) => {
 
 /**
  * Responsds to the [[EditEvent]] dispatched on the [[events$]]
- * [[Subject]] after the user types to change the title of
+ * `Subject` after the user types to change the title of
  * a [[Todo]]
  *
  * The only effect here is updating state. No API calls
@@ -244,9 +265,11 @@ const handleEditEvent = (event: EditEvent) => {
  * @param event
  */
 const handleSaveEvent = (event: SaveEvent) => {
+  // @ts-ignore
   const operation = toPending(event.operation, EventType.Save as const);
 
   const updateTransaction = {
+    // @ts-ignore  
     type: TransactionType.Update as const,
     payload: tuple(event.todo, operation)
   };
