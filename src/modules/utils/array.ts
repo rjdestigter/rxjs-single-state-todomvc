@@ -1,3 +1,6 @@
+/**
+ * @module utils
+ */
 import { tuple } from "./tuple";
 
 type F<A, B> = (a: A) => B;
@@ -5,7 +8,9 @@ type F<A, B> = (a: A) => B;
 export const arrayMap = <A, B>(f: F<A, B>) => (as: A[]) => as.map(a => f(a));
 
 /**
+ * ```hs
  * arrayBimap :: (a -> t) -> (a -> u) -> [a] -> [(u, t)]
+ * ```
  * @param f
  */
 export const arrayBimap = <A, T>(f: F<A, T>) => <U>(g: F<A, U>) => (as: A[]) =>
@@ -18,7 +23,9 @@ export const arrayBimap = <A, T>(f: F<A, T>) => <U>(g: F<A, U>) => (as: A[]) =>
 export const IS_TUPLE = true;
 
 /**
+ * ```hs
  * isArray :: boolean -> t | [t] -> boolean
+ * ```
  *
  * Wrapper around Array.isArray when working with tuple like data structures.
  *

@@ -1,3 +1,6 @@
+/**
+ * @module transactions
+ */
 
 /**
  * Type of transaction you might apply to a dataset
@@ -42,4 +45,4 @@ export type Transaction<A, U = A, R = A> = Add<A> | Update<U> | Remove<R>;
 /**
  * Type describing data used in transactions for data sets that are lists
  */
-export type Transanctional<T> = T[] | T;
+export type Transactional<T> = T[] | T;

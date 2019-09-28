@@ -1,3 +1,6 @@
+/**
+ * @module transactions
+ */
 import { isArray } from "../utils";
 
 import { TransactionLike, TransactionType } from "./types";

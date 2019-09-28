@@ -19,6 +19,7 @@
   "include": ["src"],
   "typedocOptions": {
     "mode": "modules",
-    "out": "docs"
+    "out": "docs",
+    "plugin": "typedoc-plugin-external-module-name"
   }
 }

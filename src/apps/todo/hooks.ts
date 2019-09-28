@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tap } from "rxjs/operators";
 
-import { dispatchFetch, eventsHandler$ } from "../../modules/todo";
+import { dispatchFetch, handleEvents$ } from "../../modules/todo";
 
 import { timeTravelableState$, Observed } from "./state";
 import { props$ } from "./select";
@@ -19,7 +19,7 @@ export const useTodoProps = () => {
   React.useEffect(() => {
     const propsSubscription = props$.pipe(tap(setProps)).subscribe();
 
-    const eventsHandlerSubscription = eventsHandler$.subscribe();
+    const handleEventsSubscription = handleEvents$.subscribe();
 
     const stateSubscription = timeTravelableState$
       .pipe(
@@ -30,7 +30,7 @@ export const useTodoProps = () => {
     dispatchFetch()
 
     return () => {
-      eventsHandlerSubscription.unsubscribe();
+      handleEventsSubscription.unsubscribe();
       stateSubscription.unsubscribe();
       propsSubscription.unsubscribe();
     };

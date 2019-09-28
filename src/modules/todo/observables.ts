@@ -1,3 +1,7 @@
+/**
+ * @module todo
+ */
+
 // RxJS
 import { Subject, from, of, EMPTY, concat, Observable } from "rxjs";
 import {
@@ -42,7 +46,12 @@ import {
   TodoWithOperation
 } from "./types";
 
-import { isFetchEvent, isEditEvent, isSaveEvent, makeFetchEvent } from "./events";
+import {
+  isFetchEvent,
+  isEditEvent,
+  isSaveEvent,
+  makeFetchEvent
+} from "./events";
 
 import { toMutable } from "./utils";
 
@@ -50,7 +59,7 @@ import { toMutable } from "./utils";
 import { makeNoop, isPending, isBad, toPending, isNoop } from "../operations";
 
 // Transaction
-import { TransactionType } from "../transactions";
+import { TransactionType, Transactional } from "../transactions";
 
 // Effects
 import {
@@ -66,7 +75,6 @@ import {
 
 /**
  * @private
- *
  * `Subject` for dispatching and streaming events.
  */
 const events$ = new Subject<TodoEvent>();
@@ -89,7 +97,7 @@ export const dispatch = (event: TodoEvent) => {
  * ```hs
  * dispatchFetch :: () -> void
  * ```
- * 
+ *
  * Dispatches the [[FetchEvent]] to the [[events$]] `Subject`.
  */
 export const dispatchFetch = () => dispatch(makeFetchEvent());
@@ -112,9 +120,8 @@ export const [todos$, writeTodos] = transactionalStateOf(
 
 /**
  * ```hs
- * resetOkAndBadTodos :: Observable (RedoableEven, ResetableOperatio) -> Observable (RedoableEven, ResetableOperatio)
+ * resetOkAndBadTodos :: Observable (RedoableEvent, ResetableOperation) -> Observable (RedoableEvent, ResetableOperation)
  * ```
- * 
  * Operator for resetting a [[Todo]]'s [[TodoOperation]] to [[Noop]]
  * after it was set to [[Bad]] or [[Ok]]
  *
@@ -134,14 +141,14 @@ const resetOkAndBadTodos = (
  * ```hs
  * handleEvents$ :: Observable ()
  * ```
- * 
- * Main observable for handling incoming events. Kind of like a
- * a reducer in redux.
+ *
+ * Main observable for handling incoming events that have been dispatched
+ * to the [[events$]] `Subject`. Kind of like a reducer in redux.
  *
  * It groups the events by type [[EventType.Fetch]] or the `id` of the [[Todo]].
  * and uses `switchMap` for each group.
  */
-export const handleEvents$ = events$.pipe(
+export const handleEvents$: Observable<never> = events$.pipe(
   groupBy(
     event => {
       if (isFetchEvent(event)) {
@@ -179,16 +186,22 @@ export const handleEvents$ = events$.pipe(
 type Id<T> = (id: T) => T;
 
 /**
+ * ```hs
+ * handleReadEvent :: FetchEvent -> Observable (Transactional TodoWithOperation)
+ * ```
+ *
  * Handles incoming [[FetchEvent]] events that have been
  * dispatched to the [[events$]] `Subject`
  *
- * It immediately calls the API for requesting Todos from
+ * It immediately calls the API for requesting [[Todo]]s from
  * the server and updates state with the received todos
- * by running the addEffect
+ * by running the [[addEffect]]
  *
  * @param event The [[FetchEvent]] event
  */
-export const handleReadEvent = (event: FetchEvent) =>
+export const handleReadEvent = (
+  event: FetchEvent
+): Observable<Transactional<TodoWithOperation>> =>
   from(read()).pipe(
     // map(arrayMap(curry(tuple))),
     map(
@@ -208,14 +221,18 @@ export const handleReadEvent = (event: FetchEvent) =>
  * from the database.
  *
  * State is updating first to indicate "in progress". Then the
- * API for deleting Todos is called. Once the call resolves
+ * API for deleting Todos is called. Once the call re solves
  * state is updated to indicate failure or success. After a second
  * state is updated once again to reset the operation so that the
  * UI removes the indicators of failure or success.
  *
  * @param event - The delete event [[DeleteEvent]]
  */
-const handleDeleteEvent = (event: DeleteEvent) => {
+const handleDeleteEvent = (
+  event: DeleteEvent
+): Observable<
+  Transactional<TodoWithOperation | [RedoableEvent, ResetableOperation]>
+> => {
   const operation = toPending(
     makeNoop(toMutable(event.todo)),
     // @ts-ignore
@@ -236,6 +253,10 @@ const handleDeleteEvent = (event: DeleteEvent) => {
 };
 
 /**
+ * ```hs
+ * handleEditEvent :: EditEvent -> Observable
+ * ```
+ * 
  * Responsds to the [[EditEvent]] dispatched on the [[events$]]
  * `Subject` after the user types to change the title of
  * a [[Todo]]
@@ -244,7 +265,7 @@ const handleDeleteEvent = (event: DeleteEvent) => {
  *
  * @param event [[EditEvent]]
  */
-const handleEditEvent = (event: EditEvent) => {
+const handleEditEvent = (event: EditEvent): Observable<unknown> => {
   // Reset the Todo's operational status if the user
   // started editing after a success or failure operation
   const operation = isNoop(event.operation)
@@ -255,21 +276,25 @@ const handleEditEvent = (event: EditEvent) => {
 };
 
 /**
- * Handles incoming [[SaveEvent]] events that are dispatched to [[event$]]
+ * ```hs
+ * handleSaveEvent :: SaveEvent -> Observable ?
+ * ```
+ * 
+ * Handles incoming [[SaveEvent]] events that have been dispatched to [[event$]]
  *
- * - It first updates state to indicate the Todo is currently being saved.
- * - Then calls the API for updating existing todos in the database.
- * - Passes the results to runSaveOutcomeEffect to update state accordingly
- * - And resets after a delay using [[resetOkAndBadTodos]]
+ * - It first updates state to indicate the [[Todo]] is currently being saved.
+ * - Then calls the [[update]] API for mutating existing todos in the database.
+ * - Passes the results to [[runSaveOutcomeEffect]] to update state with the updated [[Todo]] and [[TodoOperation]]
+ * - The todo's operation is resets after a delay using the [[resetOkAndBadTodos]] operator
  *
  * @param event
  */
-const handleSaveEvent = (event: SaveEvent) => {
-  // @ts-ignore
+const handleSaveEvent = (event: SaveEvent): Observable<unknown> => {
+  // @ts-ignore (mitigates a typedoc issue)
   const operation = toPending(event.operation, EventType.Save as const);
 
   const updateTransaction = {
-    // @ts-ignore  
+    // @ts-ignore (mitigates a typedoc issue)
     type: TransactionType.Update as const,
     payload: tuple(event.todo, operation)
   };
@@ -287,11 +312,11 @@ const handleSaveEvent = (event: SaveEvent) => {
 };
 
 /**
- * Event stream filtered by type FETCH
- */
-export const eventsHandler$ = handleEvents$;
-
-/**
+ * ```hs
+ * (_newTodoOperation$, setNewTodoOperation, getNewTodoOperation) :: StateObservable (Operation string void void)
+ * -- aka
+ * (_newTodoOperation$, setNewTodoOperation, getNewTodoOperation) :: (Observable (Operation string void void), (Operation string void void) -> void, () -> (Operation string void void))
+ * ```
  * I'm destructuring the result of `stateOf` so that I can re-export
  * a piped version of `_newTodoOperation`
  */
@@ -300,17 +325,25 @@ const [_newTodoOperation$, setNewTodoOperation, getNewTodoOperation] = stateOf(
 );
 
 /**
- * [[StateObservable]] that handles new todos the user wants to create.
- * It starts with an empty "Noop" operation of a string (title)
- * and any time `setNewTodoOperation` is called the stream checks if the status
- * has changed to "pending" and if so will start calling the API
- * for storing the new todo in the datatabase.
+ * @private
+ * 
+ * ```hs
+ * newTodoOperation$ :: StateObservable (Operation string void void)
+ * ```
+ * 
+ * [[StateObservable]] that handles creating a new [[Todo]] for the user.
+ * It starts with a [[Noop]] operation of a `string`, the title of the new [[Todo]].
+ * 
+ * Any time the [[StateObservable]]'s `setState` function `setNewTodoOperation` is
+ * called the observable's operator checks if the status has changed to [[Pending]]
+ * and if so will direct the [[NewTodoOperation]] to the [[create]] API for storing
+ * the new todo in the datatabase.
  *
  * Using [[thruple]] to re-export everything as a [[StateObservable]]
  *
  *
  */
-export const newTodoOperation$ = thruple(
+export const newTodoOperation$: StateObservable<NewTodoOperation> = thruple(
   _newTodoOperation$.pipe(
     switchMap(state =>
       isPending(state)
@@ -324,4 +357,4 @@ export const newTodoOperation$ = thruple(
   ),
   setNewTodoOperation,
   getNewTodoOperation
-) as StateObservable<NewTodoOperation>;
+)

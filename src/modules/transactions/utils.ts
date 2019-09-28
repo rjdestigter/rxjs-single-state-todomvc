@@ -1,3 +1,6 @@
+/**
+ * @module transactions
+ */
 import { TransactionType } from './types'
 
 /**

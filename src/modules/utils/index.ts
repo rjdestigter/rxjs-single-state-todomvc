@@ -1,4 +1,7 @@
 /**
+ * @module utils
+ */
+/**
  * Don't ask. I was experimenting with point-free. Basically:
  * - We get (a, b)
  * - Then apply f((a, b)) wich gives use (a -> c)

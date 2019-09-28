@@ -1,4 +1,13 @@
-export function get<K extends string>(prop: K) {
+/**
+ * @module utils
+ */
+
+
+/**
+ * TODO
+ * @param prop 
+ */
+ export function get<K extends string>(prop: K) {
   // function getter<T extends { [P in K]?: T[K] }>(object: T): T[K]
   function getter<T extends { [P in K]: T[K] }>(object: T): T[K] {
     return object[prop]
@@ -7,6 +16,10 @@ export function get<K extends string>(prop: K) {
   return getter
 }
 
+/**
+ * TODO
+ * @param prop 
+ */
 export function set<K extends string>(prop: K) {
   // function setter<T extends { [P in K]?: T[K] }>(object: T): (value: T[K]) => T
   function setter<T extends { [P in K]: T[K] }>(object: T): (value: T[K]) => T {
@@ -20,11 +33,19 @@ export function set<K extends string>(prop: K) {
   return setter
 }
 
+/**
+ * TODO
+ * @param prop 
+ */
 export interface GetProperty<K extends string> {
   <T extends { [P in K]?: any }>(object: T): T[K]
   <T extends { [P in K]: any }>(object: T): T[K]
 }
 
+/**
+ * TODO
+ * @param prop 
+ */
 export interface SetProperty<K extends string> {
   <T extends { [P in K]?: any }>(object: T, value: T[K]): T
   <T extends { [P in K]: any }>(object: T, value: T[K]): T

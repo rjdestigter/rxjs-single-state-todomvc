@@ -1,3 +1,6 @@
+/**
+ * @module todo
+ */
 import { Operation, Noop, Bad } from "../operations";
 
 /**

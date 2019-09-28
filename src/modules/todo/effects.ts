@@ -1,3 +1,6 @@
+/**
+ * @module todo
+ */
 import {
   EventType,
   Todo,
@@ -15,7 +18,7 @@ import {
   makeAddTransaction,
   makeUpdateTransaction,
   makeRemoveTransaction,
-  Transanctional
+  Transactional
 } from "../transactions";
 
 // Operations
@@ -35,7 +38,7 @@ export type RedoableEvent = SaveEvent | DeleteEvent;
 
 /* Effectful function for updating state */
 export type Writer = (
-  todos: Transaction<Transanctional<TodoWithOperation>>
+  todos: Transaction<Transactional<TodoWithOperation>>
 ) => void;
 
 /**
@@ -70,9 +73,9 @@ export const resetOkAndBadTodosEffect = (writer: Writer) => ([
 
 const makeWriteEffect = (
   transactionMaker: (
-    data: Transanctional<[Todo, TodoOperation]>
-  ) => Transaction<Transanctional<[Todo, TodoOperation]>>
-) => (writer: Writer) => (data: Transanctional<[Todo, TodoOperation]>) =>
+    data: Transactional<[Todo, TodoOperation]>
+  ) => Transaction<Transactional<[Todo, TodoOperation]>>
+) => (writer: Writer) => (data: Transactional<[Todo, TodoOperation]>) =>
   writer(transactionMaker(data));
 
 export const addEffect = makeWriteEffect(makeAddTransaction);

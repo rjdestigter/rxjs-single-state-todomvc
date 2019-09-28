@@ -1,3 +1,6 @@
+/**
+ * @module todo
+ */
 import { Todo, MutableTodo } from "./types";
 import { get, set } from "../utils/getset";
 

@@ -1,4 +1,7 @@
 /**
+ * @module utils
+ */
+/**
  * isNotNull :: a | null -> a asserted
  * 
  * Filter nullable types from an array
