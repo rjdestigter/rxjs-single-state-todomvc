@@ -51,12 +51,12 @@ type MapOfStateFromMapOfObservables<T> = {
 };
 
 /**
- * State$ describes an [[Observable]] that emits a state object where
- * key/value pairs created by a sub [[Observable]] are immutable and
+ * State$ describes an `Observable` that emits a state object where
+ * key/value pairs created by a sub `Observable` are immutable and
  * key/values streamed by a [[StateObservable]] are semi-mutuable in
  * the sense that you can change their value in an mutauble style as
  * a _setter_ has been defined for that key/value pair that will send
- * the assigned value to the StateObservable's [[Subject]]
+ * the assigned value to the [[StateObservable]]'s `Subject`  
  *
  */
 export type State$<T extends MapOfObservables> = Observable<
@@ -64,7 +64,15 @@ export type State$<T extends MapOfObservables> = Observable<
 >;
 
 /**
+ * ```hs
+ * createState :: MapOfObservables t => MapOfObservables t -> State$ t
+ * ```
+ * 
  * Creates a single state observable from a map of [[ObservableLike]]
+ * 
+ * @param mapOfObservables Map (object) of observables.
+ * @returns An observable whos data stream matches the shape of `mapOfObservables`
+ * 
  */
 export const createState = <T extends MapOfObservables>(
   mapOfObservables: T

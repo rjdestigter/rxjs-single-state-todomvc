@@ -1,9 +1,13 @@
-import { Todo, TodoOperation } from "../todo";
+import { Todo, TodoOperation, TodoWithOperation } from "../todo";
 import { FilterType } from "./types";
 import { isFilterTypeCompleted, isFilterTypeActive } from "./assert";
 
 /**
- * TODO
+ * ```hs
+ * makeFilterTodosByFilterType :: (FilterType a) => [Todo] -> [Todo]
+ * ```
+ * @param filterType Type of filter to create a filter function for.
+ * @returns A function that filters given [[Todo]]s by the provided type.
  */
 export const makeFilterTodosByFilterType = <T extends FilterType>(
   filterType: T
@@ -17,13 +21,23 @@ export const makeFilterTodosByFilterType = <T extends FilterType>(
       );
 
 /**
- * TODO
+ * ```hs
+ * filterCompletedTodos :: [TodoWithOperation] -> [TodoWithOperation]
+ * ```
+ * @param todos List of [[Todo]]s to be filtered
+ * @returns List of todos that are all complete.
  */
 export const filterCompletedTodos = makeFilterTodosByFilterType(
   FilterType.Completed
 );
 
 /**
- * TODO
+ * ```hs
+ * filterActiveTodos :: [TodoWithOperation] -> [TodoWithOperation]
+ * ```
+ * @param todos List of [[Todo]]s to be filtered
+ * @returns List of todos that are all active.
  */
-export const filterActiveTodos = makeFilterTodosByFilterType(FilterType.Active);
+export const filterActiveTodos: (
+  todos: TodoWithOperation[]
+) => TodoWithOperation[] = makeFilterTodosByFilterType(FilterType.Active);

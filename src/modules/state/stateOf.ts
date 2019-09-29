@@ -2,6 +2,10 @@ import { Observable, BehaviorSubject } from "rxjs";
 
 /**
  * Similar to the what React's `useState` hook returns but for observables.
+ * It's a thruple containing:
+ *  - 0: A stateful observable  (see RxJS' `BehaviourSubject`)
+ *  - 1: A function to update/set the state (`$.next(..)`)
+ *  - 2. A get state function. (`$.getValue()`)
  */
 export type StateObservable<T, U = T> = readonly [
   Observable<U>,
@@ -15,6 +19,9 @@ export type StateObservable<T, U = T> = readonly [
 export type ObservableLike<T> = StateObservable<T> | Observable<T>;
 
 /**
+ * ```hs
+ * isStateObservable :: ObservableLike a -> boolean
+ * ```
  * Determines if the given observable like value is a [[StateObservable]]
  */
 export const isStateObservable = <T>(
@@ -22,8 +29,12 @@ export const isStateObservable = <T>(
 ): observable$ is StateObservable<T> => Array.isArray(observable$);
 
 /**
- * Create a stateful observable
+ * ```hs
+ * stateOf :: a -> StateObservable a
+ * ```
+ * Create a stateful observable. Uses RxJS' `BehaviourSubject` under the hood.
  * 
+ * @typeparam T Type describing the type of the data stored.
  * @param initialState Initial state of the observable (see [[BehaviourSubject]])
  */
 export const stateOf = <T>(
