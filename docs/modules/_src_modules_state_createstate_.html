@@ -98,7 +98,7 @@
 					<div class="tsd-signature tsd-kind-icon">Key<wbr>OfType&lt;T, V&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">{ [P in keyof T]: T[P] extends V ? P : never; }[keyof T]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/state/createState.ts#L9">src/modules/state/createState.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/969405c/src/modules/state/createState.ts#L15">src/modules/state/createState.ts:15</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -106,6 +106,9 @@
 							<p>Returns a type describing all keys of object T
 							that are of type V</p>
 						</div>
+						<p>For example:</p>
+						<pre><code class="language-ts"><span class="hljs-keyword">type</span> User = { id: <span class="hljs-built_in">number</span>, name: <span class="hljs-built_in">string</span>, age: <span class="hljs-built_in">number</span> }
+<span class="hljs-keyword">type</span> NumericUserProperties = KeyOfType&lt;User, <span class="hljs-built_in">number</span>&gt; <span class="hljs-comment">// 'id' | 'age'</span></code></pre>
 					</div>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
@@ -123,7 +126,7 @@
 					<div class="tsd-signature tsd-kind-icon">Map<wbr>OfObservables<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/state/createState.ts#L29">src/modules/state/createState.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/969405c/src/modules/state/createState.ts#L55">src/modules/state/createState.ts:55</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -146,21 +149,30 @@
 					<div class="tsd-signature tsd-kind-icon">Map<wbr>OfState<wbr>From<wbr>Map<wbr>OfObservables&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/state/createState.ts#L49">src/modules/state/createState.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/969405c/src/modules/state/createState.ts#L85">src/modules/state/createState.ts:85</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>A type representing a map of values based on a map of
+							<p>A type representing an objectc, a map of values, based on a map of
 								[[Observable]] or <a href="_src_modules_state_stateof_.html#stateobservable">StateObservable</a> and the values those
 							observable stream.</p>
 						</div>
 						<p>For example</p>
-						<pre><code class="language-ts"><span class="hljs-keyword">type</span> Foo = MapOfStateFromMapOfObservables&lt;{ bar: Observable&lt;<span class="hljs-built_in">number</span>&gt;&gt;, zax: StateObservable&lt;<span class="hljs-built_in">string</span>&gt; }
+						<pre><code class="language-ts"><span class="hljs-keyword">type</span> State = MapOfStateFromMapOfObservables&lt;{
+ users: Observable&lt;User[]&gt;&gt;,
+ active: StateObservable&lt;<span class="hljs-built_in">boolean</span>&gt;
+}
 
 <span class="hljs-comment">// equates to</span>
 
-<span class="hljs-keyword">type</span> Foo = { readonly bar: <span class="hljs-built_in">number</span>, zax: <span class="hljs-built_in">string</span> }</code></pre>
+<span class="hljs-keyword">type</span> State = { readonly users: <span class="hljs-built_in">number</span>, active: <span class="hljs-built_in">boolean</span> }</code></pre>
+						<p>In this example you are building a state object where
+							<code>state.users</code> is immutauble and not controlled by the application
+							while <code>state.active</code> is a <a href="_src_modules_state_stateof_.html#stateobservable">StateObservable</a> to which you can
+							not only subscribe to get the &quot;next&quot; value of <code>.active</code> but also
+						emit to, aka set it&#39;s state</p>
+						<pre><code></code></pre>
 					</div>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
@@ -180,7 +192,7 @@
 					<div class="tsd-signature tsd-kind-icon">Readonly<wbr>ByKey&lt;T, K&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">Omit</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/state/createState.ts#L17">src/modules/state/createState.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/969405c/src/modules/state/createState.ts#L33">src/modules/state/createState.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -188,6 +200,13 @@
 							<p>Returns a type that makes all values of object T readonly
 							if they belong to keys in type K</p>
 						</div>
+						<p>For example:</p>
+						<pre><code class="language-ts"><span class="hljs-keyword">type</span> User = { id: <span class="hljs-built_in">number</span>, name: <span class="hljs-built_in">string</span>, age: <span class="hljs-built_in">number</span> }
+<span class="hljs-keyword">type</span> UserWithProtectedId = Readonly&lt;User, <span class="hljs-string">'id'</span>&gt;
+
+<span class="hljs-keyword">const</span> user: Readonly&lt;User, <span class="hljs-string">'id'</span>&gt; = { id: <span class="hljs-number">24</span>, name: <span class="hljs-string">'Bob'</span>, age: <span class="hljs-number">54</span> }
+user.age = <span class="hljs-number">55</span> <span class="hljs-comment">// no problem here</span>
+user.id = <span class="hljs-number">77</span> <span class="hljs-comment">// should not compile</span></code></pre>
 					</div>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
@@ -205,7 +224,7 @@
 					<div class="tsd-signature tsd-kind-icon">Readonly<wbr>ByType&lt;T, V&gt;<span class="tsd-signature-symbol">:</span> <a href="_src_modules_state_createstate_.html#readonlybykey" class="tsd-signature-type">ReadonlyByKey</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><a href="_src_modules_state_createstate_.html#keyoftype" class="tsd-signature-type">KeyOfType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/state/createState.ts#L24">src/modules/state/createState.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/969405c/src/modules/state/createState.ts#L50">src/modules/state/createState.ts:50</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -213,6 +232,13 @@
 							<p>Returns a type that makes all values of object T readonly
 							if they are of type V</p>
 						</div>
+						<p>For example:</p>
+						<pre><code class="language-ts"><span class="hljs-keyword">type</span> User = { id: <span class="hljs-built_in">number</span>, name: <span class="hljs-built_in">string</span>, age: <span class="hljs-built_in">number</span> }
+
+<span class="hljs-keyword">const</span> user: Readonly&lt;User, <span class="hljs-built_in">number</span>&gt; = { id: <span class="hljs-number">24</span>, name: <span class="hljs-string">'Bob'</span>, age: <span class="hljs-number">54</span> }
+user.age = <span class="hljs-number">55</span> <span class="hljs-comment">// should not compile</span>
+user.id = <span class="hljs-number">77</span> <span class="hljs-comment">// should not compile</span>
+user.name = <span class="hljs-string">"Alice"</span> <span class="hljs-comment">// no problem here</span></code></pre>
 					</div>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
@@ -230,18 +256,16 @@
 					<div class="tsd-signature tsd-kind-icon">State$&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_src_modules_state_createstate_.html#mapofstatefrommapofobservables" class="tsd-signature-type">MapOfStateFromMapOfObservables</a><span class="tsd-signature-symbol">&lt;</span><a href="_src_modules_state_createstate_.html#readonlybytype" class="tsd-signature-type">ReadonlyByType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/state/createState.ts#L62">src/modules/state/createState.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/969405c/src/modules/state/createState.ts#L97">src/modules/state/createState.ts:97</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>State$ describes an <code>Observable</code> that emits a state object where
-								key/value pairs created by a sub <code>Observable</code> are immutable and
-								key/values streamed by a <a href="_src_modules_state_stateof_.html#stateobservable">StateObservable</a> are semi-mutuable in
-								the sense that you can change their value in an mutauble style as
-								a <em>setter</em> has been defined for that key/value pair that will send
-							the assigned value to the <a href="_src_modules_state_stateof_.html#stateobservable">StateObservable</a>&#39;s <code>Subject</code></p>
+							<p><a href="_src_modules_state_createstate_.html#state_">State$</a> describes an <code>Observable</code> that is the composition of
+							of a map of observables.</p>
 						</div>
+						<p>See <a href="_src_modules_state_createstate_.html#mapofstatefrommapofobservables">MapOfStateFromMapOfObservables</a> for more information on
+						the data streamed by this observable.</p>
 					</div>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
@@ -263,7 +287,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/state/createState.ts#L77">src/modules/state/createState.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/969405c/src/modules/state/createState.ts#L133">src/modules/state/createState.ts:133</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -271,6 +295,22 @@
 									<pre><code class="language-hs"><span class="hljs-title">createState</span> :: <span class="hljs-type">MapOfObservables</span> t =&gt; <span class="hljs-type">MapOfObservables</span> t -&gt; <span class="hljs-type">State</span>$ t</code></pre>
 								</div>
 								<p>Creates a single state observable from a map of <a href="_src_modules_state_stateof_.html#observablelike">ObservableLike</a></p>
+								<p>The keys of <code>mapOfObservables</code> are reduced into an array of thruples
+									where each thruple contains:
+									0 - The key / property being iterated
+									1 - A <em>getter</em> function for that property
+								2 _ A <em>setter</em> function for that property</p>
+								<p>Since values on the <code>mapOfObservables</code> object are either <code>Obervable</code> or
+									<a href="_src_modules_state_stateof_.html#stateobservable">StateObservable</a>, the thruple created for both differs slightly in
+									that the <em>setter</em> function for <code>Observables</code> logs a warning to the
+									console in development mode since data/state for <code>Obserable</code>s is considered
+								immutable.</p>
+								<p>Finally the list of (key, getter, setter) data is reduced into a single object.
+									<code>Object.defineProperty</code> is used to decalre <code>get</code> and <code>set</code> on the accumulated
+								object.</p>
+								<p>See <a href="_src_modules_state_createstate_.html#mapofstatefrommapofobservables">MapOfStateFromMapOfObservables</a> for more information on
+								the data streamed by this observable.</p>
+								<p>TODO I think this can be simplified with less iterations</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
