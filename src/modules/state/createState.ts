@@ -5,6 +5,12 @@ import { map, tap, share } from "rxjs/operators";
 /**
  * Returns a type describing all keys of object T
  * that are of type V
+ * 
+ * For example:
+ * ```ts
+ * type User = { id: number, name: string, age: number }
+ * type NumericUserProperties = KeyOfType<User, number> // 'id' | 'age'
+ * ```
  */
 type KeyOfType<T, V> = {
   [P in keyof T]: T[P] extends V ? P : never;
@@ -13,6 +19,16 @@ type KeyOfType<T, V> = {
 /**
  * Returns a type that makes all values of object T readonly
  * if they belong to keys in type K
+ * 
+ * For example:
+ * ```ts
+ * type User = { id: number, name: string, age: number }
+ * type UserWithProtectedId = Readonly<User, 'id'>
+ * 
+ * const user: Readonly<User, 'id'> = { id: 24, name: 'Bob', age: 54 }
+ * user.age = 55 // no problem here
+ * user.id = 77 // should not compile
+ * ```
  */
 type ReadonlyByKey<T extends {}, K extends keyof T> = Readonly<Pick<T, K>> &
   Omit<T, K>;
@@ -20,6 +36,16 @@ type ReadonlyByKey<T extends {}, K extends keyof T> = Readonly<Pick<T, K>> &
 /**
  * Returns a type that makes all values of object T readonly
  * if they are of type V
+ * 
+ * For example:
+ * ```ts
+ * type User = { id: number, name: string, age: number }
+ * 
+ * const user: Readonly<User, number> = { id: 24, name: 'Bob', age: 54 }
+ * user.age = 55 // should not compile
+ * user.id = 77 // should not compile
+ * user.name = "Alice" // no problem here
+ * ```
  */
 type ReadonlyByType<T, V> = ReadonlyByKey<T, KeyOfType<T, V>>;
 
@@ -31,18 +57,28 @@ type MapOfObservables = {
 };
 
 /**
- * A type representing a map of values based on a map of
+ * A type representing an objectc, a map of values, based on a map of
  * [[Observable]] or [[StateObservable]] and the values those
  * observable stream.
  *
  * For example
  *
  * ```ts
- * type Foo = MapOfStateFromMapOfObservables<{ bar: Observable<number>>, zax: StateObservable<string> }
+ * type State = MapOfStateFromMapOfObservables<{
+ *  users: Observable<User[]>>,
+ *  active: StateObservable<boolean>
+ * }
  *
  * // equates to
  *
- * type Foo = { readonly bar: number, zax: string }
+ * type State = { readonly users: number, active: boolean }
+ * ```
+ * 
+ * In this example you are building a state object where
+ * `state.users` is immutauble and not controlled by the application
+ * while `state.active` is a [[StateObservable]] to which you can
+ * not only subscribe to get the "next" value of `.active` but also
+ * emit to, aka set it's state
  * ```
  *
  */
@@ -51,12 +87,11 @@ type MapOfStateFromMapOfObservables<T> = {
 };
 
 /**
- * State$ describes an `Observable` that emits a state object where
- * key/value pairs created by a sub `Observable` are immutable and
- * key/values streamed by a [[StateObservable]] are semi-mutuable in
- * the sense that you can change their value in an mutauble style as
- * a _setter_ has been defined for that key/value pair that will send
- * the assigned value to the [[StateObservable]]'s `Subject`  
+ * [[State$]] describes an `Observable` that is the composition of
+ * of a map of observables.
+ * 
+ * See [[MapOfStateFromMapOfObservables]] for more information on
+ * the data streamed by this observable.
  *
  */
 export type State$<T extends MapOfObservables> = Observable<
@@ -69,6 +104,27 @@ export type State$<T extends MapOfObservables> = Observable<
  * ```
  * 
  * Creates a single state observable from a map of [[ObservableLike]]
+ * 
+ * The keys of `mapOfObservables` are reduced into an array of thruples
+ * where each thruple contains:
+ * 0 - The key / property being iterated
+ * 1 - A _getter_ function for that property
+ * 2 _ A _setter_ function for that property
+ * 
+ * Since values on the `mapOfObservables` object are either `Obervable` or
+ * [[StateObservable]], the thruple created for both differs slightly in
+ * that the _setter_ function for `Observables` logs a warning to the
+ * console in development mode since data/state for `Obserable`s is considered
+ * immutable.
+ * 
+ * Finally the list of (key, getter, setter) data is reduced into a single object.
+ * `Object.defineProperty` is used to decalre `get` and `set` on the accumulated
+ * object.
+ * 
+ * See [[MapOfStateFromMapOfObservables]] for more information on
+ * the data streamed by this observable.
+ * 
+ * TODO I think this can be simplified with less iterations
  * 
  * @param mapOfObservables Map (object) of observables.
  * @returns An observable whos data stream matches the shape of `mapOfObservables`
