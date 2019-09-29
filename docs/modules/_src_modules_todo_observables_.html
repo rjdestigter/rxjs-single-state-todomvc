@@ -112,7 +112,7 @@
 					<div class="tsd-signature tsd-kind-icon">Id&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L186">src/modules/todo/observables.ts:186</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L186">src/modules/todo/observables.ts:186</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -152,7 +152,7 @@
 					<div class="tsd-signature tsd-kind-icon">_new<wbr>Todo<wbr>Operation$<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L323">src/modules/todo/observables.ts:323</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L323">src/modules/todo/observables.ts:323</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -162,7 +162,7 @@
 					<div class="tsd-signature tsd-kind-icon">events$<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Subject&lt;TodoEvent&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L80">src/modules/todo/observables.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L80">src/modules/todo/observables.ts:80</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -174,7 +174,7 @@
 					<div class="tsd-signature tsd-kind-icon">get<wbr>New<wbr>Todo<wbr>Operation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L323">src/modules/todo/observables.ts:323</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L323">src/modules/todo/observables.ts:323</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -199,7 +199,7 @@
 					<div class="tsd-signature tsd-kind-icon">handle<wbr>Events$<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;events$.pipe(groupBy(event &#x3D;&gt; {if (isFetchEvent(event)) {return EventType.Fetch;} else {return event.todo.id;}},event &#x3D;&gt; event,actionsByGroup$ &#x3D;&gt;actionsByGroup$.pipe(timeoutWith(15000, EMPTY),ignoreElements())),mergeMap(groupedEvent$ &#x3D;&gt;groupedEvent$.pipe(switchMap(event &#x3D;&gt; {if (isFetchEvent(event)) {return handleReadEvent(event);} else if (isEditEvent(event)) {return handleEditEvent(event);} else if (isSaveEvent(event)) {return handleSaveEvent(event);}return handleDeleteEvent(event);}))),ignoreElements())</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L151">src/modules/todo/observables.ts:151</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L151">src/modules/todo/observables.ts:151</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -218,7 +218,7 @@
 					<div class="tsd-signature tsd-kind-icon">new<wbr>Todo<wbr>Operation$<span class="tsd-signature-symbol">:</span> <a href="_src_modules_state_stateof_.html#stateobservable" class="tsd-signature-type">StateObservable</a><span class="tsd-signature-symbol">&lt;</span><a href="_src_modules_todo_types_.html#newtodooperation" class="tsd-signature-type">NewTodoOperation</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;thruple(_newTodoOperation$.pipe(switchMap(state &#x3D;&gt;isPending(state)? from(create(state)).pipe(tap(runCreateOutcomeEffect(writeTodos)),map(nextState &#x3D;&gt; (isBad(nextState) ? nextState : makeNoop(&quot;&quot;))),startWith(state)): of(state))),setNewTodoOperation,getNewTodoOperation)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L346">src/modules/todo/observables.ts:346</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L346">src/modules/todo/observables.ts:346</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -230,7 +230,7 @@
 					<div class="tsd-signature tsd-kind-icon">set<wbr>New<wbr>Todo<wbr>Operation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L323">src/modules/todo/observables.ts:323</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L323">src/modules/todo/observables.ts:323</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -261,7 +261,7 @@
 					<div class="tsd-signature tsd-kind-icon">todos$<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L115">src/modules/todo/observables.ts:115</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L115">src/modules/todo/observables.ts:115</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -271,7 +271,7 @@
 					<div class="tsd-signature tsd-kind-icon">write<wbr>Todos<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L115">src/modules/todo/observables.ts:115</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L115">src/modules/todo/observables.ts:115</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -309,7 +309,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L91">src/modules/todo/observables.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L91">src/modules/todo/observables.ts:91</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -343,7 +343,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L103">src/modules/todo/observables.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L103">src/modules/todo/observables.ts:103</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -366,7 +366,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L231">src/modules/todo/observables.ts:231</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L231">src/modules/todo/observables.ts:231</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -405,7 +405,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L268">src/modules/todo/observables.ts:268</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L268">src/modules/todo/observables.ts:268</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -442,7 +442,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L202">src/modules/todo/observables.ts:202</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L202">src/modules/todo/observables.ts:202</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -480,7 +480,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L292">src/modules/todo/observables.ts:292</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L292">src/modules/todo/observables.ts:292</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -519,7 +519,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/todo/observables.ts#L130">src/modules/todo/observables.ts:130</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/todo/observables.ts#L130">src/modules/todo/observables.ts:130</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

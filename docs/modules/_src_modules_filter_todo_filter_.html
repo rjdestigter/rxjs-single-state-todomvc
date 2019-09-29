@@ -91,16 +91,45 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
 					<a name="filteractivetodos" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> filter<wbr>Active<wbr>Todos</h3>
-					<div class="tsd-signature tsd-kind-icon">filter<wbr>Active<wbr>Todos<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> =&nbsp;makeFilterTodosByFilterType(FilterType.Active)</span></div>
+					<div class="tsd-signature tsd-kind-icon">filter<wbr>Active<wbr>Todos<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> =&nbsp;makeFilterTodosByFilterType(FilterType.Active)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/filter-todo/filter.ts#L29">src/modules/filter-todo/filter.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/filter-todo/filter.ts#L41">src/modules/filter-todo/filter.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>TODO</p>
+							<pre><code class="language-hs"><span class="hljs-title">filterActiveTodos</span> :: [<span class="hljs-type">TodoWithOperation</span>] -&gt; [<span class="hljs-type">TodoWithOperation</span>]</code></pre>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>param</dt>
+							<dd><p>List of <a href="_src_modules_todo_types_.html#todo-3">Todo</a>s to be filtered</p>
+							</dd>
+							<dt>returns</dt>
+							<dd><p>List of todos that are all active.</p>
+							</dd>
+						</dl>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>todos<span class="tsd-signature-symbol">: </span><a href="_src_modules_todo_types_.html#todowithoperation" class="tsd-signature-type">TodoWithOperation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_src_modules_todo_types_.html#todowithoperation" class="tsd-signature-type">TodoWithOperation</a><span class="tsd-signature-symbol">[]</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>todos: <a href="_src_modules_todo_types_.html#todowithoperation" class="tsd-signature-type">TodoWithOperation</a><span class="tsd-signature-symbol">[]</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <a href="_src_modules_todo_types_.html#todowithoperation" class="tsd-signature-type">TodoWithOperation</a><span class="tsd-signature-symbol">[]</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
@@ -109,13 +138,21 @@
 					<div class="tsd-signature tsd-kind-icon">filter<wbr>Completed<wbr>Todos<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> =&nbsp;makeFilterTodosByFilterType(FilterType.Completed)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/filter-todo/filter.ts#L22">src/modules/filter-todo/filter.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/filter-todo/filter.ts#L30">src/modules/filter-todo/filter.ts:30</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>TODO</p>
+							<pre><code class="language-hs"><span class="hljs-title">filterCompletedTodos</span> :: [<span class="hljs-type">TodoWithOperation</span>] -&gt; [<span class="hljs-type">TodoWithOperation</span>]</code></pre>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>param</dt>
+							<dd><p>List of <a href="_src_modules_todo_types_.html#todo-3">Todo</a>s to be filtered</p>
+							</dd>
+							<dt>returns</dt>
+							<dd><p>List of todos that are all complete.</p>
+							</dd>
+						</dl>
 					</div>
 				</section>
 			</section>
@@ -131,12 +168,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/848e1eb/src/modules/filter-todo/filter.ts#L8">src/modules/filter-todo/filter.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/rjdestigter/rxjs-single-state-todomvc/blob/050508e/src/modules/filter-todo/filter.ts#L12">src/modules/filter-todo/filter.ts:12</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>TODO</p>
+									<pre><code class="language-hs"><span class="hljs-title">makeFilterTodosByFilterType</span> :: (<span class="hljs-type">FilterType</span> a) =&gt; [<span class="hljs-type">Todo</span>] -&gt; [<span class="hljs-type">Todo</span>]</code></pre>
 								</div>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -149,9 +186,15 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>filterType: <span class="tsd-signature-type">T</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>Type of filter to create a filter function for.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+							<p>A function that filters given <a href="_src_modules_todo_types_.html#todo-3">Todo</a>s by the provided type.</p>
 						</li>
 					</ul>
 				</section>
