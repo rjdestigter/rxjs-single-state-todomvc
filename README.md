@@ -12,6 +12,8 @@ I ended up with a few nice architectural solutions that I would like to talk abo
 - Using transactions to read, update, and remove from state.
 
 Throughout the process I also experimented with point-free style and other functional programming concepts.
+### Documentation
+Documentation generatoed using (typedoc)[https://typedoc.org/] can be found [here](https://rjdestigter.github.io/rxjs-single-state-todomvc/docs/)
 
 # How Does It Work
 
